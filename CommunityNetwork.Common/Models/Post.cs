@@ -1,4 +1,6 @@
 ﻿using CommunityNetwork.Common.Enums;
+using CommunityNetwork.Common.Inerfaces;
+using CommunityNetWork.Dal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +9,13 @@ using System.Threading.Tasks;
 
 namespace CommunityNetwork.Common.Models
 {
-    public class Post
+    public class Post: Node,IPost
     {
         public DateTime CreateTime { get; set; }
         public VisibilityPermission VisibilityPermission { get; set; }
         public string ImageSourcePath { get; set; }
+        public List<string> Likers { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         private string _content;
 
         public int GetLikes()
@@ -45,6 +49,16 @@ namespace CommunityNetwork.Common.Models
         public List<Profile> GetLikers()
         {
             return new List<Profile>();
+        }
+
+        public void Like()
+        {
+            throw new NotImplementedException();
+        }
+
+        List<Profile> ILikeable.Likers()
+        {
+            throw new NotImplementedException();
         }
 
         public Post(string content)

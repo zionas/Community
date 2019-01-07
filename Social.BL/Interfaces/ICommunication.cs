@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommunityNetwork.Common.Enums
+namespace Social.BL.Interfaces
 {
-    public enum NotificationType { Like, Follow, Block, Comment, Publish }
+    public interface ICommunication
+    {
+    }
 }

@@ -1,10 +1,7 @@
-﻿using CommunityNetwork.Common.Enums;
+﻿
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
+using CommunityNetwork.Common.Enums;
 namespace CommunityNetwork.Common.Models
 {
     public class Notification
@@ -13,6 +10,6 @@ namespace CommunityNetwork.Common.Models
         public DateTime Time { get; set; }
         public NotificationType NotificationType { get; set; }
 
-       
+        
     }
 }
