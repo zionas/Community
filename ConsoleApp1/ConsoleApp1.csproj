@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5783C551-B1F7-48F2-AB81-0AEE4598159E}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CommunityNetWork.Dal</RootNamespace>
-    <AssemblyName>CommunityNetWork.Dal</AssemblyName>
+    <ProjectGuid>{156972CE-73AC-415A-9D59-411F982F74B4}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ConsoleApp1</RootNamespace>
+    <AssemblyName>ConsoleApp1</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -70,33 +72,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AwsDynamoDBFactory.cs" />
-    <Compile Include="DynamoDBConnector.cs" />
-    <Compile Include="Interfaces\IDBConnector.cs" />
-    <Compile Include="Interfaces\IDBConnectorFactory.cs" />
-    <Compile Include="Interfaces\IDynamoDB.cs" />
-    <Compile Include="Interfaces\IDynamoDBFactory.cs" />
-    <Compile Include="Neo4JConnectorFactory.cs" />
-    <Compile Include="Interfaces\IGraph.cs" />
-    <Compile Include="Interfaces\IGraphFactory.cs" />
-    <Compile Include="Neo4JConnector.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\AWSSDK.DynamoDBv2.3.3.16\analyzers\dotnet\cs\AWSSDK.DynamoDBv2.CodeAnalysis.dll" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\CommunityNetwork.Common\CommunityNetwork.Common.csproj">
-      <Project>{301e0f01-b128-4b06-b56c-a9792e9d57c2}</Project>
+      <Project>{301E0F01-B128-4B06-B56C-A9792E9D57C2}</Project>
       <Name>CommunityNetwork.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CommunityNetWork.Dal\CommunityNetWork.Dal.csproj">
+      <Project>{5783c551-b1f7-48f2-ab81-0aee4598159e}</Project>
+      <Name>CommunityNetWork.Dal</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SocialSerivce\SocialSerivce.csproj">
+      <Project>{F0E65C9E-5A39-46EF-9F0E-EFD9FDB9B8E5}</Project>
+      <Name>SocialSerivce</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Enums\" />
+    <Analyzer Include="..\packages\AWSSDK.DynamoDBv2.3.3.16\analyzers\dotnet\cs\AWSSDK.DynamoDBv2.CodeAnalysis.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

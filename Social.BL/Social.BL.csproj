@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{301E0F01-B128-4B06-B56C-A9792E9D57C2}</ProjectGuid>
+    <ProjectGuid>{5F9D868F-3C1A-4A38-828C-3F641A2AF258}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CommunityNetwork.Common</RootNamespace>
-    <AssemblyName>CommunityNetwork.Common</AssemblyName>
+    <RootNamespace>Social.BL</RootNamespace>
+    <AssemblyName>Social.BL</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,12 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AWSSDK.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
-      <HintPath>..\packages\AWSSDK.Core.3.3.30.3\lib\net45\AWSSDK.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="AWSSDK.DynamoDBv2, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
-      <HintPath>..\packages\AWSSDK.DynamoDBv2.3.3.16.1\lib\net45\AWSSDK.DynamoDBv2.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,27 +41,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enums\Linkage.cs" />
-    <Compile Include="Enums\NotificationType.cs" />
-    <Compile Include="Enums\VisibilityPermission.cs" />
-    <Compile Include="Inerfaces\ICommentable.cs" />
-    <Compile Include="Inerfaces\ILikeable.cs" />
-    <Compile Include="Inerfaces\INode.cs" />
-    <Compile Include="Inerfaces\IPost.cs" />
-    <Compile Include="Inerfaces\ISocial.cs" />
-    <Compile Include="Models\Comment.cs" />
-    <Compile Include="Inerfaces\IAuthor.cs" />
-    <Compile Include="Models\Node.cs" />
-    <Compile Include="Models\Notification.cs" />
-    <Compile Include="Models\Post.cs" />
-    <Compile Include="Models\Profile.cs" />
+    <Compile Include="Class1.cs" />
+    <Compile Include="Interfaces\IAnalyzer.cs" />
+    <Compile Include="Interfaces\ICommunication.cs" />
+    <Compile Include="Interfaces\IRepository.cs" />
+    <Compile Include="LinkageAnalyzer.cs" />
+    <Compile Include="Models\Communication.cs" />
+    <Compile Include="Models\Publish.cs" />
+    <Compile Include="Models\PublishAnalyzer.cs" />
+    <Compile Include="Models\Repository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\CommunityNetwork.Common\CommunityNetwork.Common.csproj">
+      <Project>{301E0F01-B128-4B06-B56C-A9792E9D57C2}</Project>
+      <Name>CommunityNetwork.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CommunityNetWork.Dal\CommunityNetWork.Dal.csproj">
+      <Project>{5783c551-b1f7-48f2-ab81-0aee4598159e}</Project>
+      <Name>CommunityNetWork.Dal</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\AWSSDK.DynamoDBv2.3.3.16.1\analyzers\dotnet\cs\AWSSDK.DynamoDBv2.CodeAnalysis.dll" />
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
