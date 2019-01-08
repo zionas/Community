@@ -12,6 +12,7 @@ using CommunityNetWork.Dal.Interfaces;
 using CommunityNetWork.Dal;
 using Social.BL.Interfaces;
 using Social.BL.Models;
+using System.Web.Http.Cors;
 
 namespace SocialSerivce
 {
@@ -22,6 +23,7 @@ namespace SocialSerivce
             // Web API configuration and services
 
             // Web API routes
+            config.EnableCors(new EnableCorsAttribute("http://localhost:4200", headers: "*", methods: "*"));
             config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
