@@ -495,9 +495,9 @@ namespace CommunityNetWork.Dal
             where TUnLinked : INode
         {
             var findNode = CreateWhereEqualsLambda<TNode>("Id", nodeId);
-            var noLinkage = "r is null";
+            
             string match = GetMatchLinkageString<TNode, TUnLinked>(linkage);
-
+            var noLinkage = "not " +match;
             return Connect().Cypher
             .OptionalMatch(match)
             .Where(findNode)

@@ -1,5 +1,6 @@
 ﻿using CommunityNetwork.Common;
 using CommunityNetWork.Dal.Interfaces;
+using Newtonsoft.Json;
 using Social.BL.Models;
 using System.Collections.Generic;
 using System.Net;
@@ -34,7 +35,11 @@ namespace SocialSerivce.Controllers
         {
             Profile p=repos.Add(profile);
             if (p.Equals(profile))
-                return Ok(p);//("Created" + p.Id);
+            {
+                
+                    return Ok(p);
+            }
+                
             else
                 return Content(HttpStatusCode.InternalServerError, false);
         }
