@@ -1,4 +1,6 @@
-﻿using CommunityNetWork.Dal;
+﻿using Authentication.BL;
+using CommunityNetwork.Common.Inerfaces;
+using CommunityNetWork.Dal;
 using CommunityNetWork.Dal.Interfaces;
 using SimpleInjector;
 using SimpleInjector.Integration.WebApi;
@@ -24,14 +26,6 @@ namespace AuthenticationService
             );
         }
 
-        private static void InitContainer()
-        {
-            var container = new Container();
-            container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-            container.Register<IDynamoDBFactory>(() => new AwsDynamoDBFactory());
-            container.Verify();
-            GlobalConfiguration.Configuration.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
-            GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-        }
+   
     }
 }
