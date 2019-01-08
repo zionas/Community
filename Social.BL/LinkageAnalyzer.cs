@@ -1,11 +1,10 @@
-﻿using CommunityNetWork.Dal;
-using CommunityNetWork.Dal.Enums;
+﻿using CommunityNetwork.Common.Inerfaces;
+using CommunityNetWork.Common.Enums;
+using CommunityNetWork.Dal;
 using Social.BL.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Social.BL
 {

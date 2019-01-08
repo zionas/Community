@@ -1,4 +1,5 @@
 ﻿using CommunityNetwork.Common.Inerfaces;
+using CommunityNetwork.Common.Models;
 using CommunityNetWork.Common.Enums;
 
 using CommunityNetWork.Dal.Interfaces;
@@ -34,7 +35,7 @@ namespace CommunityNetWork.Dal
         const string CreateFormat = "(n:{0}{{newNode}})";
         const string MatchLinkageFormat = "(node:{0})<-[r:{1}]-(linked:{2})";
         const string MatchByLinkageFormat = "(node:{0})-[r:{1}]->(linkedBy:{2})";
-        const string MatchByLinkageByLinkageFormat = "(node:{0})-[{1}]->(linkedby:{2})-[{3}]->(linkedbylinkedby:{4})";
+        const string MatchByLinkageByLinkageFormat = "(node:{0})-[r1:{1}]->(linkedby:{2})-[r2:{3}]->(linkedbylinkedby:{4})";
         const string MatchStringLinkageFormat = "{0}{1}[r:{2}]{3}(linked:{4})";
         const string ByLinkageFormat = "(node)-[:{0}]->(linkedBy)";
         const string CreateAndLinkFormat = "(node)<-[:{0}]-(linked:{1}{{newNode}})";
@@ -48,7 +49,8 @@ namespace CommunityNetWork.Dal
         string _password = "zzneo4j";
         string _uri = "http://localhost:7474/db/data";
 
-        public Neo4jConnector(string uri = "http://localhost:7474/db/data",
+        public Neo4jConnector(bool useLocal=true,
+                              string uri = "http://localhost:7474/db/data",
                               string user = "neo4j",
                               string password = "zzneo4j")
         {
@@ -173,7 +175,7 @@ namespace CommunityNetWork.Dal
         }
         
 
-        static string GetMatchLabelsString(params Node[] nodes)
+        static string GetMatchLabelsString(params MNode[] nodes)
         {
             string[] nodesLabels = new string[nodes.Length];
             string format = "(";
@@ -236,10 +238,10 @@ namespace CommunityNetWork.Dal
         }
         
 
-        static List<Tuple<string, object>> GetFindByIdParams(params Node[] nodes)
+        static List<Tuple<string, object>> GetFindByIdParams(params INode[] nodes)
         {
             List<Tuple<string, object>> valuesToFind = new List<Tuple<string, object>>();
-            foreach (Node n in nodes)
+            foreach (INode n in nodes)
             {
                 valuesToFind.Add(new Tuple<string, object>("id", n.Id));
 
@@ -248,16 +250,16 @@ namespace CommunityNetWork.Dal
         }
         
 
-        public ICypherFluentQuery NodesQuery(params Node[] nodes)
+        public ICypherFluentQuery NodesQuery(params MNode[] nodes)
         {
             var findByIdParams = GetFindByIdParams(nodes);
             string matchLabelsString = GetMatchLabelsString(nodes);
             var query = Connect().Cypher.Match(matchLabelsString);
-            return WhereQuery<Node>(query, findByIdParams);
+            return WhereQuery<INode>(query, findByIdParams);
         }
         
 
-        public void LinkBy(Node node, Node linkedBy, Linkage linkage, LinkParams linkParams )
+        public void LinkBy(MNode node, MNode linkedBy, Linkage linkage, LinkParams linkParams )
         {
             var query = NodesQuery(node, linkedBy);
 
@@ -273,14 +275,14 @@ namespace CommunityNetWork.Dal
             return (ICypherResultItem other, ICypherResultItem l, ICypherResultItem r) =>
                 new LinkedNode
                 {
-                    NodeId = other.As<Node>().Id,
+                    NodeId = other.As<MNode>().Id,
                     LinkageVal = l.As<Linkage>(),
                     LinkParamVal = r.As<LinkParams>()
                 };
         }
         
 
-        public List<LinkedNode> GetLinksBy<TNode,TLinked>(Node linkedBy, Linkage linkage)
+        public List<LinkedNode> GetLinksBy<TNode,TLinked>(MNode linkedBy, Linkage linkage)
             where TNode : INode
             where TLinked: INode
         {
@@ -288,7 +290,7 @@ namespace CommunityNetWork.Dal
 
             var query = Connect().Cypher
                 .Match(match)
-                .Where((Node n) => n.Id == linkedBy.Id)
+                .Where((MNode n) => n.Id == linkedBy.Id)
                 .Return(CreateLinkageResultLambda());
 
             return query.Results.ToList();
@@ -308,7 +310,7 @@ namespace CommunityNetWork.Dal
         }
         
 
-        public void Put(Node node)
+        public void Put(INode node)
         {
             string merge = string.Format("(n:{0}", node.GetType().Name) + "{Id:{id}})";
             Connect().Cypher
@@ -418,7 +420,7 @@ namespace CommunityNetWork.Dal
         }
         
 
-        public bool Link<TNode, TLinked>(Guid nodeId, Guid linkedId, Linkage linkage) where TNode : Node where TLinked : INode
+        public bool Link<TNode, TLinked>(Guid nodeId, Guid linkedId, Linkage linkage) where TNode : INode where TLinked : INode
         {
             var nodeMatch = GetMatchLabelString<TNode>("node");
             var linkedMatch = GetMatchLabelString<TLinked>("linked");
@@ -487,7 +489,24 @@ namespace CommunityNetWork.Dal
             .Results.ToList();
 
         }
-        
+
+        public List<MNode> GetNodeNotLinks<TNode, TUnLinked>(Guid nodeId, Linkage linkage)
+            where TNode : INode
+            where TUnLinked : INode
+        {
+            var findNode = CreateWhereEqualsLambda<TNode>("Id", nodeId);
+            var noLinkage = "r is null";
+            string match = GetMatchLinkageString<TNode, TUnLinked>(linkage);
+
+            return Connect().Cypher
+            .OptionalMatch(match)
+            .Where(findNode)
+            .AndWhere(noLinkage)
+            .Return(linked => linked.As<MNode>())
+            .Results.ToList();
+
+        }
+
 
         public List<TLinked> GetNodeNewLinks<TNode, TLinked>(Guid nodeId, Linkage linkage,DateTime dateTime) where TNode : INode
         {
@@ -532,7 +551,22 @@ namespace CommunityNetWork.Dal
             .Results.ToList();
 
         }
-        
+
+        public List<MNode> GetNodeLinkedByNotLinkedBy<TNode, TLinkedBy, TLinkedByLinkedBy>(Guid nodeId, Linkage linkage, Linkage linkageBy)
+            where TNode : INode where TLinkedBy : INode where TLinkedByLinkedBy : INode
+
+        {
+            var findNode = CreateWhereEqualsLambda<TNode>("Id", nodeId);
+            var noLinkage = "r1 is null";
+            string match = GetMatchByLinkageByLinkageString<TNode, TLinkedBy, TLinkedByLinkedBy>(linkage, linkageBy);
+            return Connect().Cypher
+            .OptionalMatch(match)
+            .Where(findNode)
+            .AndWhere(noLinkage)
+            .Return(linkedbylinkedby => linkedbylinkedby.As<MNode>())
+            .Results.ToList();
+
+        }
 
         public List<Tuple<TLinkedBy, TLinkedByLinkedBy>>  GetNodeNewLinkedByLinkedBy<TNode, TLinkedBy, TLinkedByLinkedBy>(Guid nodeId, Linkage linkage, Linkage linkageBy,DateTime dateTime)
             where TNode : INode where TLinkedBy : INode where TLinkedByLinkedBy : INode

@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using CommunityNetwork.Common.Models;
+using CommunityNetWork.Common.Enums;
 using CommunityNetWork.Dal;
-using CommunityNetWork.Dal.Enums;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Neo4J.Test
 {
     
-     class NodeA : Node
+     class NodeA : MNode
     {
         public int IntProperty { get; set; }
         public string StringProperty { get; set; }

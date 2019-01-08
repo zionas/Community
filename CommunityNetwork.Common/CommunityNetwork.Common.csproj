@@ -56,7 +56,7 @@
     <Compile Include="Inerfaces\ISocial.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Inerfaces\IAuthor.cs" />
-    <Compile Include="Models\Node.cs" />
+    <Compile Include="Models\MNode.cs" />
     <Compile Include="Models\Notification.cs" />
     <Compile Include="Models\Post.cs" />
     <Compile Include="Models\Profile.cs" />
