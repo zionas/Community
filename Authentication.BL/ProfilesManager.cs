@@ -10,22 +10,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Authentication.BL
 {
     public class ProfilesManager : IProfileService
     {
-        private readonly IDBConnector _iDbConnector;
-        private readonly IDynamoDBFactory dBFactory;
+        private readonly IDynamoDB _iDynamoDB;
+        private readonly IDBConnectorFactory dBFactory;
 
-        public ProfilesManager(IDynamoDBFactory  dBFactory)
+        public ProfilesManager(IDBConnectorFactory dBFactory)
         {
             this.dBFactory = dBFactory;
-            this._iDbConnector = dBFactory.Create(false);
+            this._iDynamoDB = (IDynamoDB)dBFactory.Create(false);
         }
 
         public Profile Login(string email, string password)
         {
-            var profileConnected = _iDbConnector.Get<Profile>(email, true);
+            var profileConnected = _iDynamoDB.Get<Profile>(email, true);
             if (profileConnected?.Password == password)
             {
                 GenerateToken(profileConnected.Email);
@@ -39,7 +40,7 @@ namespace Authentication.BL
 
         public bool CheckValidationToken(string email)
         {
-            var token = _iDbConnector.Get<TokenModel>(email, true);
+            var token = _iDynamoDB.Get<TokenModel>(email, true);
             return CheckValidToken(token.TokenCreateTime);
         }
 
@@ -51,7 +52,7 @@ namespace Authentication.BL
                 TokenCreateTime = DateTime.Now,
                 Email = email
             };
-            _iDbConnector.Add(tokenModel);
+            _iDynamoDB.Add(tokenModel);
         }
 
         private bool CheckValidToken(DateTime tokenCreateTime)
@@ -61,7 +62,7 @@ namespace Authentication.BL
 
         public Profile Register(Profile profile)
         {
-            _iDbConnector.Add(profile);
+            _iDynamoDB.Add(profile);
             return profile;
         }
 

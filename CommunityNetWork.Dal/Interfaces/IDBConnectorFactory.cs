@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 namespace CommunityNetWork.Dal.Interfaces
 {
     public interface IDBConnectorFactory
-        
     {
         IDBConnector Create(bool useLocal = true);
     }
