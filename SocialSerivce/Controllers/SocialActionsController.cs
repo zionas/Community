@@ -51,12 +51,12 @@ namespace SocialSerivce.Controllers
         }
         [HttpPost]
         [Route("IsLinked")]
-        public IHttpActionResult IsLinked([FromBody]SocialAction socialAction)
+        public IHttpActionResult IsFollowed([FromBody]SocialAction socialAction)
         {
             Guid fromId = socialAction.FromId;
             Guid toId = socialAction.ToId;
             Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
-            bool linked=_com.IsLinked<INode,INode>(fromId, toId,linkage);
+            bool linked=_com.IsLinked<Profile,Profile>(fromId, toId,linkage);
             return Ok(linked);
 
 
