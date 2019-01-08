@@ -1,18 +1,18 @@
 ﻿
 using CommunityNetWork.Common.Enums;
-using CommunityNetWork.Dal.Interfaces;
-using Social.BL.Models;
 using Social.BL.Interfaces;
 using SocialSerivce.Models;
 using System;
 using System.Collections.Generic;
 using System.Web.Http;
+using CommunityNetwork.Common.Inerfaces;
+using CommunityNetwork.Common;
 
 namespace SocialSerivce.Controllers
 {
     [RoutePrefix("api/SocialActions")]
    
-    public class SocialActionsController : ApiController
+    public class SocialActionsController : TokenedApiController
     {
         ICommunication _com;
         IRepository _repos;
@@ -23,9 +23,13 @@ namespace SocialSerivce.Controllers
         }
          
         // GET: api/SocialActions
-        public IEnumerable<string> Get()
+        public IHttpActionResult Get()
         {
-            return new string[] { "value1","value2" };
+
+            if (!IsAuthorized())
+                
+                return BadRequest("not authorized");
+            return Ok(new string[] { "value1","value2" });
         }
 
         // GET: api/SocialActions/5
@@ -44,10 +48,31 @@ namespace SocialSerivce.Controllers
             return Ok("Follows");
                 
 
-            }
+        }
+        [HttpPost]
+        [Route("IsLinked")]
+        public IHttpActionResult IsLinked([FromBody]SocialAction socialAction)
+        {
+            Guid fromId = socialAction.FromId;
+            Guid toId = socialAction.ToId;
+            Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
+            bool linked=_com.IsLinked<INode,INode>(fromId, toId,linkage);
+            return Ok(linked);
 
-            // PUT: api/SocialActions/5
-            public void Put(int id, [FromBody]string value)
+
+        }
+        [HttpPost]
+        [Route("GetNotBlocked")]
+        public IHttpActionResult GetNotBlocked([FromBody]Guid blockerId)
+        {
+           
+            var notLinked= _com.GetNotLinked<Profile, Profile>(blockerId,Linkage.Block);
+            return Ok(notLinked);
+
+
+        }
+        // PUT: api/SocialActions/5
+        public void Put(int id, [FromBody]string value)
         {
         }
 

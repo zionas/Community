@@ -1,21 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2.DataModel;
 using CommunityNetwork.Common;
+using CommunityNetwork.Common.Models;
 using CommunityNetWork.Common.Enums;
-using CommunityNetWork.Common.Models;
 using CommunityNetWork.Dal;
-
 using CommunityNetWork.Dal.Interfaces;
 using Newtonsoft.Json;
-
 using SocialSerivce.Models;
 
 namespace ConsoleApp1
 {
-    class Test1 : Node
+    class Test1 : MNode
     {
         public string Name1 { get; set; }
     }
@@ -27,10 +26,34 @@ namespace ConsoleApp1
     }
     class Program
     {
-        static HttpClient client = new HttpClient();
+        
         const string _api = "http://localhost:52225/api";
         const string _social = "/SocialActions";
         const string _persistence = "/Persistence";
+        static void Get()
+        {
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.BaseAddress = new Uri(_api + _persistence);
+                string url = _api + _social ;
+                httpClient.DefaultRequestHeaders.Add("Authorization", "user " + "zzzzzzzzzz");
+
+
+                var response = httpClient.GetAsync(url).Result;
+                
+                if (response.IsSuccessStatusCode)
+                {
+                    var cont = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    Console.WriteLine(cont);
+                    var p = JsonConvert.DeserializeObject<List<string>>(cont);
+                    foreach(string s in p)
+                        Console.WriteLine(s);
+                    
+                }
+                
+            }
+
+        }
         static Guid Create()
         {
             Profile profile = new Profile();
@@ -42,13 +65,14 @@ namespace ConsoleApp1
 
                 HttpContent content = new StringContent(JsonConvert.SerializeObject(profile), Encoding.UTF8, "application/json");
                 //var response = client.GetAsync(url).Result;
-                var response = client.PostAsync(url, content).Result;
+                var response = httpClient.PostAsync(url, content).Result;
                 //var response = client.GetAsync(_api + _persistence ).Result;
                 if (response.IsSuccessStatusCode)
                 {
                     var cont = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
                     Console.WriteLine(cont);
                     Profile p = JsonConvert.DeserializeObject<Profile>(cont);
+                    
                     return p.Id;
                 }
                 return default(Guid);
@@ -73,7 +97,24 @@ namespace ConsoleApp1
                 httpClient.BaseAddress = new Uri(_api+_social);
                 HttpContent content = new StringContent(JsonConvert.SerializeObject(socialAction), Encoding.UTF8, "application/json");
                 string url = _api + _social + "/Follow";
-                var response = client.PostAsync(url, content).Result;
+                var response = httpClient.PostAsync(url, content).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var cont = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    Console.WriteLine(cont);
+                }
+            }
+
+        }
+        static void GetNotBlocked(Guid id)
+        {
+          using (var httpClient = new HttpClient())
+            {
+                httpClient.BaseAddress = new Uri(_api + _social);
+                HttpContent content = new StringContent(JsonConvert.SerializeObject(id), Encoding.UTF8, "application/json");
+                string url = _api + _social + "/GetNotBlocked";
+                var response = httpClient.PostAsync(url, content).Result;
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -103,7 +144,7 @@ namespace ConsoleApp1
                 Name1 = "sixty six",
 
             };
-            using (IDynamoDB db = new AwsDynamoDBFactory().Create(true))
+            using (IDynamoDB db = (IDynamoDB)new AwsDynamoDBFactory().Create(true))
 
                 try
                 {
@@ -149,10 +190,11 @@ namespace ConsoleApp1
         }
         static void Main(string[] args)
         {
-            Console.WriteLine(
-                );// Guid p1=Create();
-            //Guid p2 = Create();
-            //Follow(p1, p2);
+               Guid p1=Create();
+            GetNotBlocked(p1);
+            //  Guid p2 = Create();
+            //  Follow(p1, p2);
+            //Get();
 
         }
     }

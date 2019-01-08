@@ -9,9 +9,9 @@ namespace CommunityNetWork.Dal
 {
     public class Neo4JConnectorFactory : IGraphFactory
     {
-        public IGraph Create()
+        public IDBConnector Create(bool useLocal)
         {
-            return new Neo4jConnector();
+            return new Neo4jConnector(useLocal);
         }
     }
 }

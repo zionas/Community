@@ -9,7 +9,7 @@ namespace CommunityNetWork.Dal
 {
     public class AwsDynamoDBFactory:IDynamoDBFactory
     {
-        public IDynamoDB Create(bool useLocal)
+        public IDBConnector Create(bool useLocal)
         {
             return new DynamoDBConnector(useLocal);
         }

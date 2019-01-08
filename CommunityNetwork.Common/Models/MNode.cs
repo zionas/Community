@@ -5,12 +5,12 @@ using CommunityNetwork.Common.Inerfaces;
 namespace CommunityNetwork.Common.Models
 {
     
-        public class Node : INode
+        public class MNode : INode
     {
         public Guid Id { get; set; }
         public string NodeName { get { return GetType().Name; } }
         public DateTime CreateTime { get; }
-        public Node()
+        public MNode()
         {
             Id = Guid.NewGuid();
             CreateTime = DateTime.Now;
@@ -25,7 +25,7 @@ namespace CommunityNetwork.Common.Models
         {
             if (obj.GetType() != GetType())
                 return false;
-            return Id == ((Node)obj).Id;
+            return Id == ((MNode)obj).Id;
         }
         public override int GetHashCode()
         {
