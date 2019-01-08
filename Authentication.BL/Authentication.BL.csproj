@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{301E0F01-B128-4B06-B56C-A9792E9D57C2}</ProjectGuid>
+    <ProjectGuid>{FFEEDC6C-DE8A-4989-A99A-9978CCE67B7F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CommunityNetwork.Common</RootNamespace>
-    <AssemblyName>CommunityNetwork.Common</AssemblyName>
+    <RootNamespace>Authentication.BL</RootNamespace>
+    <AssemblyName>Authentication.BL</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -46,25 +46,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Enums\Linkage.cs" />
-    <Compile Include="Enums\NotificationType.cs" />
-    <Compile Include="Enums\VisibilityPermission.cs" />
-    <Compile Include="Inerfaces\ICommentable.cs" />
-    <Compile Include="Inerfaces\ILikeable.cs" />
-    <Compile Include="Inerfaces\INode.cs" />
-    <Compile Include="Inerfaces\IPost.cs" />
-    <Compile Include="Inerfaces\IProfileService.cs" />
-    <Compile Include="Inerfaces\ISocial.cs" />
-    <Compile Include="Models\Comment.cs" />
-    <Compile Include="Inerfaces\IAuthor.cs" />
-    <Compile Include="Models\MNode.cs" />
-    <Compile Include="Models\Notification.cs" />
-    <Compile Include="Models\Post.cs" />
-    <Compile Include="Models\Profile.cs" />
-    <Compile Include="Models\TokenModel.cs" />
+    <Compile Include="ProfilesManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommunityNetwork.Common\CommunityNetwork.Common.csproj">
+      <Project>{301E0F01-B128-4B06-B56C-A9792E9D57C2}</Project>
+      <Name>CommunityNetwork.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CommunityNetWork.Dal\CommunityNetWork.Dal.csproj">
+      <Project>{5783C551-B1F7-48F2-AB81-0AEE4598159E}</Project>
+      <Name>CommunityNetWork.Dal</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
