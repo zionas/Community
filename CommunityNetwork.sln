@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Social.BL", "Social.BL\Soci
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neo4J.Test", "Neo4J.Test\Neo4J.Test.csproj", "{9AD9765A-8ACA-4521-A977-9BB7F19BA25B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Authentication.BL", "Authentication.BL\Authentication.BL.csproj", "{FFEEDC6C-DE8A-4989-A99A-9978CCE67B7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{9AD9765A-8ACA-4521-A977-9BB7F19BA25B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AD9765A-8ACA-4521-A977-9BB7F19BA25B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AD9765A-8ACA-4521-A977-9BB7F19BA25B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFEEDC6C-DE8A-4989-A99A-9978CCE67B7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFEEDC6C-DE8A-4989-A99A-9978CCE67B7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFEEDC6C-DE8A-4989-A99A-9978CCE67B7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFEEDC6C-DE8A-4989-A99A-9978CCE67B7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
