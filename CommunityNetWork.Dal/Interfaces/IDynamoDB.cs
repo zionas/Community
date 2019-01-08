@@ -10,10 +10,7 @@ namespace CommunityNetWork.Dal.Interfaces
     public interface IDynamoDB:IDBConnector
     {
 
-        Task<bool> AddModel(Type type);
-        bool RemoveModel(Type type);
-        void Add<T>(T model);
-        T Get<T>(Primitive hashKey, bool constintence);
+       
     }
 }
 
