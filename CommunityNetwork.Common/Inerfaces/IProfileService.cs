@@ -11,5 +11,6 @@ namespace CommunityNetwork.Common.Inerfaces
         Profile Login(string email, string password);
         bool CheckValidationToken(string email);
         Profile Register(Profile profile);
+        Profile LoginWithFaceBook(Profile profile);
     }
 }
