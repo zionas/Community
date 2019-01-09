@@ -9,9 +9,9 @@ namespace Social.BL.Interfaces
 {
     interface ILinkageAnalyzer<TNode> where TNode:INode
     {
-        List<TLinkedBy> GetLinks<TLinkedBy>(Guid nodeId, Linkage linkage) 
+        List<TLinkedBy> GetLinks<TLinkedBy>(string nodeId, Linkage linkage) 
             where TLinkedBy :INode;
-        List<TLinkedBy> GetLinked<TLinkedBy>(Guid nodeId, Linkage linkage) 
+        List<TLinkedBy> GetLinked<TLinkedBy>(string nodeId, Linkage linkage) 
             where TLinkedBy : INode;
 
     }

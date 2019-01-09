@@ -1,7 +1,8 @@
 ﻿
 using CommunityNetWork.Common.Enums;
 using Social.BL.Interfaces;
-using SocialSerivce.Models;
+using Social.BL.Models;
+
 using System;
 using System.Collections.Generic;
 using System.Web.Http;
@@ -41,29 +42,61 @@ namespace SocialSerivce.Controllers
         [Route("Follow")]
         public IHttpActionResult Follow([FromBody]SocialAction socialAction)
         {
-            Guid fromId = socialAction.FromId;
-            Guid toId = socialAction.ToId;
-            Linkage linkage = (Linkage) Enum.Parse(typeof(Linkage),socialAction.linkage);
-            _com.Follow(fromId,toId);
+            string fromId = socialAction.FromId;
+            string toId = socialAction.ToId;
+            Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), "Follow");// socialAction.linkage);
+            _com.LinkProfiles(socialAction);
             return Ok("Follows");
                 
 
         }
         [HttpPost]
-        [Route("IsLinked")]
-        public IHttpActionResult IsFollowed([FromBody]SocialAction socialAction)
+        [Route("SWLinkProfiles")]
+        public IHttpActionResult SWLinkProfiles([FromBody]SocialAction socialAction)
         {
-            Guid fromId = socialAction.FromId;
-            Guid toId = socialAction.ToId;
+            string fromId = socialAction.FromId;
+            string toId = socialAction.ToId;
             Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
-            bool linked=_com.IsLinked<Profile,Profile>(fromId, toId,linkage);
-            return Ok(linked);
+            bool linked = socialAction.swch;//_com.IsLinked<Profile, Profile>(fromId, toId, linkage);
+            if (linked)
+                _com.LinkProfiles(socialAction);
+            else
+                _com.LinkProfiles(socialAction, false);
+            return Ok(linkage+"s");
 
 
         }
+
+        
+
+        [HttpPost]
+        [Route("IsSocialLinked")]
+        public IHttpActionResult IsSocialLinked([FromBody]SocialAction socialAction)
+        {
+            string fromId = socialAction.FromId;
+            string toId = socialAction.ToId;
+            Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
+
+            switch (linkage)
+            {
+                default:
+                    return Ok(false);
+                case Linkage.Block:
+                case Linkage.Follow:
+                    bool linked = _com.IsLinked<Profile, Profile>(fromId, toId, linkage);
+                    return Ok(linked);
+            }
+           
+
+        }
+
+        
+
+
+
         [HttpPost]
         [Route("GetNotBlocked")]
-        public IHttpActionResult GetNotBlocked([FromBody]Guid blockerId)
+        public IHttpActionResult GetNotBlocked([FromBody]string blockerId)
         {
            
             var notLinked= _com.GetNotLinked<Profile, Profile>(blockerId,Linkage.Block);

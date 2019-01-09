@@ -54,7 +54,7 @@ namespace ConsoleApp1
             }
 
         }
-        static Guid Create()
+        static string Create()
         {
             Profile profile = new Profile();
             
@@ -75,12 +75,12 @@ namespace ConsoleApp1
                     
                     return p.Id;
                 }
-                return default(Guid);
+                return default(string);
             }
             
 
         }
-        static void Follow(Guid id1,Guid id2)
+        static void Follow(string id1,string id2)
         {
 
             SocialAction socialAction = new SocialAction
@@ -107,7 +107,7 @@ namespace ConsoleApp1
             }
 
         }
-        static void GetNotBlocked(Guid id)
+        static void GetNotBlocked(string id)
         {
           using (var httpClient = new HttpClient())
             {
@@ -134,13 +134,13 @@ namespace ConsoleApp1
             };
             Test1 t1 = new Test1
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 Name1 = "fifty five",
 
             };
             Test1 t3 = new Test1
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 Name1 = "sixty six",
 
             };
@@ -190,10 +190,10 @@ namespace ConsoleApp1
         }
         static void Main(string[] args)
         {
-               Guid p1=Create();
-            GetNotBlocked(p1);
-            //  Guid p2 = Create();
-            //  Follow(p1, p2);
+              // string p1=Create();
+            //GetNotBlocked(p1);
+             // string p2 = Create();
+              //Follow(p1, p2);
             //Get();
 
         }

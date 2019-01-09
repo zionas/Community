@@ -33,7 +33,7 @@ namespace Neo4J.Test
         {
             nA1= new NodeA
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 IntProperty = 1,
                 StringProperty = "1"
 
@@ -41,7 +41,7 @@ namespace Neo4J.Test
             };
             nA2 = new NodeA
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 IntProperty = 2,
                 StringProperty = "2"
 
@@ -49,7 +49,7 @@ namespace Neo4J.Test
             };
             nA3 = new NodeA
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.NewGuid().ToString(),
                 IntProperty = 3,
                 StringProperty = "3"
 
@@ -92,7 +92,8 @@ namespace Neo4J.Test
             {
                 neo4j.Create(nA1);
                 neo4j.Create(nA2);
-                result =neo4j.Link<NodeA, NodeA>(nA1.Id, nA2.Id, Linkage.Follow);
+                neo4j.Link<NodeA, NodeA>(nA1.Id, nA2.Id, Linkage.Follow);
+                result = neo4j.IsLinked<NodeA, NodeA>(nA1.Id, nA2.Id, Linkage.Follow);
                 
             }
             

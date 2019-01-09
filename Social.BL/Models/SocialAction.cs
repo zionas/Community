@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace SocialSerivce.Models
+namespace Social.BL.Models
 {
     public class SocialAction
     {
         
-            public Guid FromId { get; set; }
-            public Guid ToId { get; set; }
+            public string FromId { get; set; }
+            public string ToId { get; set; }
             public string linkage { get; set; }
+            public bool swch { get; set; }
     }
 }
