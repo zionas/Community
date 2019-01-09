@@ -9,7 +9,7 @@ namespace Social.BL.Interfaces
 {
     public interface IRepository
     {
-        TNode Get<TNode>(Guid id) where TNode : MNode;
+        TNode Get<TNode>(string id) where TNode : MNode;
         TNode Add<TNode>(TNode node) where TNode : MNode;
     }
 }

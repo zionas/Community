@@ -15,14 +15,17 @@ namespace Authentication.BL
 {
     public class ProfilesManager : IProfileService
     {
+
         private readonly IDynamoDB _iDynamoDB;
         private readonly IDBConnectorFactory dBFactory;
+
 
         public ProfilesManager(IDBConnectorFactory dBFactory)
         {
             this.dBFactory = dBFactory;
+
             this._iDynamoDB = (IDynamoDB)dBFactory.Create(false);
-        }
+
 
         public Profile Login(string email, string password)
         {

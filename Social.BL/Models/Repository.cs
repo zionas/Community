@@ -18,7 +18,7 @@ namespace Social.BL.Models
         {
             _graphFactory = graphFactory;
         }
-        public TNode Get<TNode>(Guid id) where TNode : MNode
+        public TNode Get<TNode>(string id) where TNode : MNode
         {
             using (IGraph neo4j = (IGraph)_graphFactory.Create())
             {

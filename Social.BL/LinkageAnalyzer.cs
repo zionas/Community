@@ -10,7 +10,7 @@ namespace Social.BL
 {
     class LinkageAnalyzer<TNode> : ILinkageAnalyzer<TNode> where TNode:INode
     {
-        public List<TLinkedBy> GetLinked<TLinkedBy>(Guid nodeId,Linkage linkage)
+        public List<TLinkedBy> GetLinked<TLinkedBy>(string nodeId,Linkage linkage)
             
             where TLinkedBy : INode
 
@@ -24,7 +24,7 @@ namespace Social.BL
 
         
 
-        public List<TLinked> GetLinks<TLinked>(Guid nodeId,Linkage linkage)
+        public List<TLinked> GetLinks<TLinked>(string nodeId,Linkage linkage)
             
             where TLinked:INode
             

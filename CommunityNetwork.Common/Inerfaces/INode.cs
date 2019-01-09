@@ -8,7 +8,7 @@ namespace CommunityNetwork.Common.Inerfaces
 {
     public interface INode
     {
-        Guid Id { get; set; }
+        string Id { get; set; }
         void ResetId();
     }
     

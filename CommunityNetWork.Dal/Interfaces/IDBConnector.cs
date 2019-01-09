@@ -9,6 +9,6 @@ namespace CommunityNetWork.Dal.Interfaces
 {
     public interface IDBConnector:IDisposable
     {
-       
+
     }
 }

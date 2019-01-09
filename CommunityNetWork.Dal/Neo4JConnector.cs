@@ -26,7 +26,7 @@ namespace CommunityNetWork.Dal
     
     public class LinkedNode
     {
-        public Guid NodeId { get; set; }
+        public string NodeId { get; set; }
         public Linkage LinkageVal { get; set; }
         public LinkParams LinkParamVal { get; set; }
     }
@@ -139,7 +139,7 @@ namespace CommunityNetWork.Dal
         }
         
 
-        public TNode Get<TNode>(Guid id) where TNode : INode
+        public TNode Get<TNode>(string id) where TNode : INode
         {
             string typeName = TypeName<TNode>();
             var query = CreateWhereEqualsLambda<TNode>("Id", id);
@@ -326,7 +326,7 @@ namespace CommunityNetWork.Dal
         }
         
 
-        public bool Delete<TNode>(Guid id) where TNode : INode
+        public bool Delete<TNode>(string id) where TNode : INode
         {
             string typeName = TypeName<TNode>();
             var query = CreateWhereEqualsLambda<TNode>("Id", id);
@@ -350,7 +350,7 @@ namespace CommunityNetWork.Dal
 
         }
         
-        public bool IsLinked<TNode,TLinked>(Guid nodeId,Guid linkedId,Linkage linkage)
+        public bool IsLinked<TNode,TLinked>(string nodeId,string linkedId,Linkage linkage)
             where TNode:INode where TLinked:INode
         {
             var linkMatch = GetMatchLinkageString<TNode, TLinked>(linkage);
@@ -367,7 +367,7 @@ namespace CommunityNetWork.Dal
             return links>0;
        }
 
-        public bool IsLinkedBy<TNode, TLinkedBy>(Guid nodeId, Guid linkedId, Linkage linkage)
+        public bool IsLinkedBy<TNode, TLinkedBy>(string nodeId, string linkedId, Linkage linkage)
             where TNode : INode where TLinkedBy : INode
         {
             var linkByMatch = GetMatchByLinkageString<TNode, TLinkedBy>(linkage);
@@ -384,7 +384,7 @@ namespace CommunityNetWork.Dal
             return linksBy > 0;
         }
 
-        public bool CreateAndLink<TNode,TLinked>(Guid nodeId, TLinked linked, Linkage linkage) 
+        public bool CreateAndLink<TNode,TLinked>(string nodeId, TLinked linked, Linkage linkage) 
             where TNode : INode
             where TLinked :INode 
         {
@@ -403,7 +403,7 @@ namespace CommunityNetWork.Dal
         }
         
 
-        public bool CreateAndLinkWithParams<TNode>(Guid nodeId, TNode linked, Linkage linkage, LinkParams linkParams) where TNode : INode
+        public bool CreateAndLinkWithParams<TNode>(string nodeId, TNode linked, Linkage linkage, LinkParams linkParams) where TNode : INode
         {
             var match = GetMatchLabelString<TNode>();
             var createAndLink = string.Format(CreateAndLinkWithParamsFormat, linkage, linked.GetType().Name);
@@ -420,7 +420,7 @@ namespace CommunityNetWork.Dal
         }
         
 
-        public bool Link<TNode, TLinked>(Guid nodeId, Guid linkedId, Linkage linkage) where TNode : INode where TLinked : INode
+        public bool Link<TNode, TLinked>(string nodeId, string linkedId, Linkage linkage) where TNode : INode where TLinked : INode
         {
             var nodeMatch = GetMatchLabelString<TNode>("node");
             var linkedMatch = GetMatchLabelString<TLinked>("linked");
@@ -438,7 +438,7 @@ namespace CommunityNetWork.Dal
         }
         
 
-        public bool UnLink<TNode, TLinked>(Guid nodeId, Guid linkedId, Linkage linkage) where TNode : INode where TLinked : INode
+        public bool UnLink<TNode, TLinked>(string nodeId, string linkedId, Linkage linkage) where TNode : INode where TLinked : INode
         {
             
             var linkMatch = GetMatchLinkageString<TNode,TLinked>(linkage);
@@ -456,7 +456,7 @@ namespace CommunityNetWork.Dal
         }
         
 
-        public bool LinkWithParams<TNode, TLinked>(Guid nodeId, Guid linkedId, Linkage linkage, LinkParams linkParams) where TNode : INode where TLinked : INode
+        public bool LinkWithParams<TNode, TLinked>(string nodeId, string linkedId, Linkage linkage, LinkParams linkParams) where TNode : INode where TLinked : INode
         {
             var nodeMatch = GetMatchLabelString<TNode>("node");
             var linkedMatch = GetMatchLabelString<TLinked>("linked");
@@ -475,7 +475,7 @@ namespace CommunityNetWork.Dal
         }
         
 
-        public List<TLinked> GetNodeLinks<TNode, TLinked>(Guid nodeId, Linkage linkage)
+        public List<TLinked> GetNodeLinks<TNode, TLinked>(string nodeId, Linkage linkage)
             where TNode : INode 
             where TLinked:INode
         {
@@ -490,7 +490,7 @@ namespace CommunityNetWork.Dal
 
         }
 
-        public List<MNode> GetNodeNotLinks<TNode, TUnLinked>(Guid nodeId, Linkage linkage)
+        public List<MNode> GetNodeNotLinks<TNode, TUnLinked>(string nodeId, Linkage linkage)
             where TNode : INode
             where TUnLinked : INode
         {
@@ -508,7 +508,7 @@ namespace CommunityNetWork.Dal
         }
 
 
-        public List<TLinked> GetNodeNewLinks<TNode, TLinked>(Guid nodeId, Linkage linkage,DateTime dateTime) where TNode : INode
+        public List<TLinked> GetNodeNewLinks<TNode, TLinked>(string nodeId, Linkage linkage,DateTime dateTime) where TNode : INode
         {
             var findNode = CreateWhereEqualsLambda<TNode>("node", "Id", nodeId);
             var findLinkage = CreateWhereNewerLambda<LinkParams>(dateTime);
@@ -523,7 +523,7 @@ namespace CommunityNetWork.Dal
         }
         
 
-        public List<TLinkedBy> GetNodeLinksBy<TNode, TLinkedBy>(Guid nodeId, Linkage linkage) where TNode : INode
+        public List<TLinkedBy> GetNodeLinksBy<TNode, TLinkedBy>(string nodeId, Linkage linkage) where TNode : INode
             where TLinkedBy : INode
         {
             var query = CreateWhereEqualsLambda<TNode>("Id", nodeId);
@@ -538,7 +538,7 @@ namespace CommunityNetWork.Dal
         }
         
 
-        public List<TLinkedByLinkedBy> GetNodeLinkedByLinkedBy<TNode,TLinkedBy,TLinkedByLinkedBy>(Guid nodeId, Linkage linkage,Linkage linkageBy) 
+        public List<TLinkedByLinkedBy> GetNodeLinkedByLinkedBy<TNode,TLinkedBy,TLinkedByLinkedBy>(string nodeId, Linkage linkage,Linkage linkageBy) 
             where TNode : INode where TLinkedBy:INode where TLinkedByLinkedBy:INode
 
         {
@@ -552,7 +552,7 @@ namespace CommunityNetWork.Dal
 
         }
 
-        public List<MNode> GetNodeLinkedByNotLinkedBy<TNode, TLinkedBy, TLinkedByLinkedBy>(Guid nodeId, Linkage linkage, Linkage linkageBy)
+        public List<MNode> GetNodeLinkedByNotLinkedBy<TNode, TLinkedBy, TLinkedByLinkedBy>(string nodeId, Linkage linkage, Linkage linkageBy)
             where TNode : INode where TLinkedBy : INode where TLinkedByLinkedBy : INode
 
         {
@@ -568,7 +568,7 @@ namespace CommunityNetWork.Dal
 
         }
 
-        public List<Tuple<TLinkedBy, TLinkedByLinkedBy>>  GetNodeNewLinkedByLinkedBy<TNode, TLinkedBy, TLinkedByLinkedBy>(Guid nodeId, Linkage linkage, Linkage linkageBy,DateTime dateTime)
+        public List<Tuple<TLinkedBy, TLinkedByLinkedBy>>  GetNodeNewLinkedByLinkedBy<TNode, TLinkedBy, TLinkedByLinkedBy>(string nodeId, Linkage linkage, Linkage linkageBy,DateTime dateTime)
             where TNode : INode where TLinkedBy : INode where TLinkedByLinkedBy : INode
         {
             var findNode = CreateWhereEqualsLambda<TNode>("node", "Id", nodeId);
@@ -616,7 +616,7 @@ namespace CommunityNetWork.Dal
         
 
         public List<Tuple<TNode, List<TLinkedBy>>> GetNodesLinksBy<TNode, TLinkedBy>(
-                                                                                Guid nodeId,
+                                                                                string nodeId,
                                                                                 Linkage linkage)
                                                                                
             where TNode : INode where TLinkedBy : INode

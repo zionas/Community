@@ -10,7 +10,7 @@ namespace Social.BL.Models
     public class Publisher
     {
 
-        public bool Publish<TNode>(Guid nodeId, TNode publish) where TNode : MNode
+        public bool Publish<TNode>(string nodeId, TNode publish) where TNode : MNode
         {
             using (Neo4jConnector neo4j = new Neo4jConnector())
             {
@@ -18,7 +18,7 @@ namespace Social.BL.Models
             }
         }
         /**********************************/
-        public bool Comment<TNode,TLinked>(Guid profileId,TNode comment,Guid postId) where TNode : MNode  where TLinked:MNode
+        public bool Comment<TNode,TLinked>(string profileId,TNode comment,string postId) where TNode : MNode  where TLinked:MNode
         {
             Publish(profileId, comment);
             using (Neo4jConnector neo4j = new Neo4jConnector())

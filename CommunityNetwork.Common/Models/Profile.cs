@@ -32,7 +32,7 @@ namespace CommunityNetwork.Common
             return null;
         }
 
-        public void Block(Guid profileName)
+        public void Block(string profileName)
         {
             _com.Link<Profile, Profile>(Id, profileName, Linkage.Block);
         }
@@ -40,14 +40,14 @@ namespace CommunityNetwork.Common
 
         
 
-        public void UnBlock(Guid profileId)
+        public void UnBlock(string profileId)
         {
             _com.UnLink<Profile, Profile>(Id, profileId, Linkage.Like);
 
         }
         
 
-        public void Follow(Guid profileId)
+        public void Follow(string profileId)
         {
             _com.Link<Profile, Profile>(Id, profileId, Linkage.Follow);
         }
@@ -59,39 +59,39 @@ namespace CommunityNetwork.Common
         }
         
 
-        public void DoComment(Comment comment,Guid commentedId)
+        public void DoComment(Comment comment,string commentedId)
         {
             _publisher.Comment<Comment,Post>(Id,comment,commentedId);
         }
         
 
-        public void Like<TLikeable>(Guid likeableId)
+        public void Like<TLikeable>(string likeableId)
             where TLikeable : Node, ILikeable
         {
             _com.Link<Profile, TLikeable>(Id, likeableId, Linkage.Like);
         }
         
 
-        public void UnLike<TLikeable>(Guid likeableId)
+        public void UnLike<TLikeable>(string likeableId)
             where TLikeable : Node, ILikeable
         {
             _com.UnLink<Profile, TLikeable>(Id, likeableId, Linkage.Like);
         }
 
-        public void Block<TSocial>(Guid socialId )
+        public void Block<TSocial>(string socialId )
             where TSocial: Node,ISocial
         {
             _com.Link<Profile, TSocial>(Id, socialId, Linkage.Block);
         }
 
 
-        public void UnBlock<TSocial>(Guid socialId)
+        public void UnBlock<TSocial>(string socialId)
             where TSocial : Node, ISocial
         {
             _com.UnLink<Profile, TSocial>(Id, socialId, Linkage.Block);
         }
 
-        public void Follow<TSocial>(Guid socialId)
+        public void Follow<TSocial>(string socialId)
             where TSocial : Node, ISocial
         {
             _com.Link<Profile, TSocial>(Id, socialId, Linkage.Follow);

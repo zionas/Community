@@ -7,19 +7,19 @@ namespace CommunityNetwork.Common.Models
     
         public class MNode : INode
     {
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         public string NodeName { get { return GetType().Name; } }
         public DateTime CreateTime { get; }
         public MNode()
         {
-            Id = Guid.NewGuid();
+            Id = Guid.NewGuid().ToString();
             CreateTime = DateTime.Now;
         }
         public void ResetId()
         {
 
-            if (Id == default(Guid))
-                Id = Guid.NewGuid();
+            if (Id == default(string))
+                Id = Guid.NewGuid().ToString();
         }
         public override bool Equals(object obj)
         {
