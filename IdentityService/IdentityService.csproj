@@ -8,12 +8,12 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2F4BDA13-CDE0-46F4-ADF0-D266DC0DC8AD}</ProjectGuid>
+    <ProjectGuid>{75318D3B-0377-4B59-A5FF-0DA52EF8D1F0}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AuthenticationService</RootNamespace>
-    <AssemblyName>AuthenticationService</AssemblyName>
+    <RootNamespace>IdentityService</RootNamespace>
+    <AssemblyName>IdentityService</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
@@ -118,7 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Controllers\AuthenticationController.cs" />
+    <Compile Include="Controllers\IdentityController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -138,17 +138,17 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Authentication.BL\Authentication.BL.csproj">
-      <Project>{FFEEDC6C-DE8A-4989-A99A-9978CCE67B7F}</Project>
-      <Name>Authentication.BL</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CommunityNetwork.Common\CommunityNetwork.Common.csproj">
-      <Project>{301e0f01-b128-4b06-b56c-a9792e9d57c2}</Project>
+      <Project>{301E0F01-B128-4B06-B56C-A9792E9D57C2}</Project>
       <Name>CommunityNetwork.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\CommunityNetWork.Dal\CommunityNetWork.Dal.csproj">
       <Project>{5783C551-B1F7-48F2-AB81-0AEE4598159E}</Project>
       <Name>CommunityNetWork.Dal</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Identity.BL\Identity.BL.csproj">
+      <Project>{18AF2A3A-7CB8-4669-8E1C-2EF97753373B}</Project>
+      <Name>Identity.BL</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -167,9 +167,9 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>60562</DevelopmentServerPort>
+          <DevelopmentServerPort>54056</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:60562/</IISUrl>
+          <IISUrl>http://localhost:54056/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

@@ -1,14 +1,13 @@
-﻿
-using CommunityNetwork.Common;
+
+﻿using CommunityNetwork.Common;
+
 using CommunityNetwork.Common.Inerfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace AuthenticationService.Controllers
 {
@@ -23,12 +22,27 @@ namespace AuthenticationService.Controllers
         }
 
         [HttpGet]
-        [Route("Login")]
+        [Route("Login")] 
         public IHttpActionResult Login(string email, string password)
         {
             try
             {
                 var profileConnected = _profileService.Login(email, password);
+                return Ok(profileConnected);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("LoginWithFaceBook")] 
+        public IHttpActionResult LoginWithFaceBook([FromBody]Profile profile)
+        {
+            try
+            {
+                var profileConnected = _profileService.LoginWithFaceBook(profile);
                 return Ok(profileConnected);
             }
             catch (Exception ex)
@@ -67,6 +81,6 @@ namespace AuthenticationService.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
+
     }
 }

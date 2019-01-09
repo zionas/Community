@@ -21,8 +21,8 @@ namespace CommunityNetWork.Dal
 
         static bool connected = false;
         static AmazonDynamoDBClient _client = null;
-        static string accessKey = "AKIAJK4VO4LM4K2N7STA";
-        static string secretKey = "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";
+        //static string accessKey = "AKIAJK4VO4LM4K2N7STA";
+        //static string secretKey = "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";
         static string pwd = "H80'[R}TdRMG";
         static string region = "us-east-1";
         static ProvisionedThroughput provisionedThroughput;
@@ -84,8 +84,8 @@ namespace CommunityNetWork.Dal
 
      static AmazonDynamoDBClient GetWebClient()
     {
-        var credentials = new BasicAWSCredentials(accessKey, secretKey);
-        return new AmazonDynamoDBClient(credentials, RegionEndpoint.USEast1);
+        //var credentials = new BasicAWSCredentials(accessKey, secretKey);
+        return new AmazonDynamoDBClient();
     }
         
 

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommunityNetWork.Dal.Interfaces
+namespace CommunityNetwork.Common.Inerfaces
 {
-    public interface IDBConnectorFactory
+    public interface IIdentityService
     {
-        IDBConnector Create(bool useLocal = true);
+        Profile Edit(Profile profile);
     }
 }

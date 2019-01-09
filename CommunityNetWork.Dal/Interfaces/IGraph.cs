@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace CommunityNetWork.Dal.Interfaces
 {
-    public interface IGraph:IDBConnector
+    public interface IGraph: IDBConnector
     {
         TNode Get<TNode>(string id) where TNode : INode;
         TNode Create<TNode>(TNode node) where TNode : INode;
