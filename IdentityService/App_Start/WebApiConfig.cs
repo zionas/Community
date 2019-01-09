@@ -1,17 +1,10 @@
-﻿using Authentication.BL;
-using CommunityNetwork.Common.Inerfaces;
-using CommunityNetWork.Dal;
-using CommunityNetWork.Dal.Interfaces;
-using SimpleInjector;
-using SimpleInjector.Integration.WebApi;
-using SimpleInjector.Lifestyles;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Cors;
 
-namespace AuthenticationService
+namespace IdentityService
 {
     public static class WebApiConfig
     {

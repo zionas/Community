@@ -20,12 +20,27 @@ namespace AuthenticationService.Controllers
         }
 
         [HttpGet]
-        [Route("Login")]
+        [Route("Login")] 
         public IHttpActionResult Login(string email, string password)
         {
             try
             {
                 var profileConnected = _profileService.Login(email, password);
+                return Ok(profileConnected);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("LoginWithFaceBook")] 
+        public IHttpActionResult LoginWithFaceBook([FromBody]Profile profile)
+        {
+            try
+            {
+                var profileConnected = _profileService.LoginWithFaceBook(profile);
                 return Ok(profileConnected);
             }
             catch (Exception ex)

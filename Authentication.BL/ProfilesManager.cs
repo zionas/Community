@@ -57,13 +57,32 @@ namespace Authentication.BL
 
         private bool CheckValidToken(DateTime tokenCreateTime)
         {
-            return DateTime.Now.Minute - tokenCreateTime.Minute < 2;
+            return true;
+            //return (DateTime.Now-tokenCreateTime).TotalMinutes < 15;
         }
 
         public Profile Register(Profile profile)
         {
             _iDynamoDB.Add(profile);
             return profile;
+        }
+
+        public Profile LoginWithFaceBook(Profile profile)
+        {
+            Profile profileConnected = null;
+            try
+            {
+                 profileConnected = _iDynamoDB.Get<Profile>(profile.Email, true);
+                if (profileConnected?.Id == profile.Id)
+                {
+                    GenerateToken(profileConnected.Email);
+                }
+            }
+            catch (Exception)
+            {
+                profileConnected = Register(profile);
+            }
+            return profileConnected;
         }
 
         //public Profile GetProfileDetails(string username)
