@@ -26,7 +26,7 @@ namespace Authentication.BL
 
             this._iDynamoDB = (IDynamoDB)dBFactory.Create(false);
 
-
+        }
         public Profile Login(string email, string password)
         {
             var profileConnected = _iDynamoDB.Get<Profile>(email, true);

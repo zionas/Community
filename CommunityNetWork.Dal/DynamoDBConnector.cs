@@ -21,10 +21,6 @@ namespace CommunityNetWork.Dal
 
         static bool connected = false;
         static AmazonDynamoDBClient _client = null;
-        //static string accessKey = "AKIAJK4VO4LM4K2N7STA";
-        //static string secretKey = "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";
-        static string pwd = "H80'[R}TdRMG";
-        static string region = "us-east-1";
         static ProvisionedThroughput provisionedThroughput;
         
         
@@ -39,7 +35,6 @@ namespace CommunityNetWork.Dal
             catch(Exception e)
             {
                 string target=useDynamoDBLocal?" Local ":"";
-                PrintException(e, "failed to create {0} Client" + target);
                 throw e;
             }
             connected = true;
@@ -88,20 +83,7 @@ namespace CommunityNetWork.Dal
         return new AmazonDynamoDBClient();
     }
         
-
-        static void PrintException(Exception ex,string msg)
-        {
-
-            Console.WriteLine(msg+":"+ex + "::" + ex.Message);
-            Exception e = ex.InnerException;
-
-            while (e != null)
-            {
-                Console.WriteLine("Inner::" + e.Message);
-                e = e.InnerException;
-            }
-            
-        }
+        
         
 
         static AttributeDefinition GetAttributeDefinition(PropertyInfo p)
@@ -173,7 +155,6 @@ namespace CommunityNetWork.Dal
             }
             catch (Exception ex)
             {
-                PrintException(ex, "Failed to create table");
                 throw ex;
             }
             return true;
@@ -320,7 +301,6 @@ namespace CommunityNetWork.Dal
             }
             catch (Exception ex)
             {
-                PrintException(ex," FAILED to create the new table, because: {0}."+ ex.Message);
                 throw ex;
             }
 

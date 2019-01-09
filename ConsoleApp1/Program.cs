@@ -10,7 +10,7 @@ using CommunityNetWork.Common.Enums;
 using CommunityNetWork.Dal;
 using CommunityNetWork.Dal.Interfaces;
 using Newtonsoft.Json;
-using SocialSerivce.Models;
+using Social.BL.Models;
 
 namespace ConsoleApp1
 {
