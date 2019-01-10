@@ -10,7 +10,10 @@ namespace CommunityNetWork.Dal.Interfaces
 {
     public interface IGraph: IDBConnector
     {
-        TNode Get<TNode>(string id) where TNode : INode;
+        List<TNode> Get<TNode>(string propertyName, object value) where TNode : INode;
+
+       TNode Get<TNode>(string id) where TNode : INode;
+        List<TNode> Get<TNode>() where TNode : INode;
         TNode Create<TNode>(TNode node) where TNode : INode;
         TNode Put<TNode>(TNode node) where TNode : INode;
         bool Delete<TNode>(string id) where TNode : INode;
@@ -39,9 +42,14 @@ namespace CommunityNetWork.Dal.Interfaces
         bool LinkWithParams<TNode, TLinked>(string nodeId, string linkedId, Linkage linkage, LinkParams linkParams) 
             where TNode : INode where TLinked : INode;
 
-        List<TLinked> GetNodeLinks<TNode, TLinked>(string nodeId, Linkage linkage)
+        List<TLinked> GetNodeLinkers<TNode, TLinked>(string nodeId, Linkage linkage)
             where TNode : INode
             where TLinked : INode;
+       
+        List<TNode> GetNodeLinked<TNode, TLinker>(string linkerId, Linkage linkage)
+           where TNode : INode
+           where TLinker : INode;
+
         List<TNotLinked> GetNodeNotLinks<TNode, TNotLinked>(string nodeId, Linkage linkage)
            where TNode : INode
            where TNotLinked : INode;

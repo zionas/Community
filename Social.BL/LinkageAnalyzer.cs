@@ -31,7 +31,7 @@ namespace Social.BL
         {
             using (Neo4jConnector neo4j = new Neo4jConnector())
             {
-                var list = neo4j.GetNodeLinks<TNode, TLinked>(nodeId, linkage);
+                var list = neo4j.GetNodeLinkers<TNode, TLinked>(nodeId, linkage);
                 return list;
             }
             

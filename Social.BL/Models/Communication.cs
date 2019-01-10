@@ -22,6 +22,7 @@ namespace Social.BL.Models
         {
             _graphFactory = graphFactory;
         }
+
         public void Link<TNode,TLinked>(string nodeId, string linkedId,Linkage linkage) 
             where TNode:INode 
             where TLinked:INode
@@ -48,14 +49,30 @@ namespace Social.BL.Models
                 return graph.IsLinked<TNode, TLinked>(nodeId, linkedId, linkage);
             }
         }
-        public List<TLinked> GetLinkers<TNode,TLinked>(string nodeId, Linkage linkage) where TNode:INode where TLinked:INode
+
+        public List<TLinker> GetLinkers<TNode,TLinker>(string nodeId, Linkage linkage) where TNode:INode where TLinker:INode
         {
             using (IGraph graph = (IGraph)_graphFactory.Create())
             {
-                return graph.GetNodeLinks<TNode, TLinked>(nodeId, linkage);
+                return graph.GetNodeLinkers<TNode, TLinker>(nodeId, linkage);
             }
         }
-        /*******************************************************/
+
+        public List<TNode> GetLinkedBy<TNode, TLinker>(string linkerId, Linkage linkage) where TNode : INode where TLinker : INode
+        {
+            using (IGraph graph = (IGraph)_graphFactory.Create())
+            {
+                return graph.GetNodeLinked<TNode, TLinker>(linkerId, linkage);
+            }
+        }
+
+        public List<TLinked> GetLinks<TNode, TLinked>(string nodeId, Linkage linkage) where TNode : INode where TLinked : INode
+        {
+            using (IGraph graph = (IGraph)_graphFactory.Create())
+            {
+                return graph.GetNodeLinkers<TNode, TLinked>(nodeId, linkage);
+            }
+        }
         public  List<TLinked> GetNewLinkers<TNode, TLinked>(string nodeId, Linkage linkage,DateTime dateTime) 
             where TNode : INode
             where TLinked:INode
@@ -65,7 +82,19 @@ namespace Social.BL.Models
                 return graph.GetNodeNewLinks<TNode, TLinked>(nodeId, linkage, dateTime);
             }
         }
-        /*******************************************************/
+
+
+        public List<TLinkedByLinkedBy> GetLinkedByLinkedBy<TNode, TLinkedBy, TLinkedByLinkedBy>(string nodeId, Linkage linkage, Linkage linkageBy)
+            where TNode : INode 
+            where TLinkedBy : INode 
+            where TLinkedByLinkedBy : INode
+        {
+            using (IGraph graph = (IGraph)_graphFactory.Create())
+            {
+                return graph.GetNodeLinkedByLinkedBy<TNode, TLinkedBy, TLinkedByLinkedBy>(nodeId, linkage, linkageBy);
+            }
+        }
+
         public  List<Tuple<TLinkedBy, TLinkedByLinkedBy>> GetNewLinkedByLinkers<TNode, TLinkedBy,TLinkedByLinkedBy>(string nodeId, Linkage linkage, Linkage linkageBy, DateTime dateTime)
             where TNode : INode where TLinkedBy : INode where TLinkedByLinkedBy : INode
         {
@@ -74,6 +103,10 @@ namespace Social.BL.Models
                 return graph.GetNodeNewLinkedByLinkedBy<TNode, TLinkedBy, TLinkedByLinkedBy>(nodeId, linkage, linkageBy, dateTime);
             }
         }
+
+
+        
+
         public List<MNode> GetNotLinked<TNode, TNotLinked>(string nodeId, Linkage linkage)
             where TNode : INode where TNotLinked : MNode
         {

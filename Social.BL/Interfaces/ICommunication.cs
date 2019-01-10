@@ -22,6 +22,13 @@ namespace Social.BL.Interfaces
            where TNode : INode where TLinked : INode;
 
        List<TLinked>  GetLinkers<TNode, TLinked>(string nodeId, Linkage linkage) where TNode : INode where TLinked : INode;
+
+        List<TNode> GetLinkedBy<TNode, TLinker>(string linkerId, Linkage linkage) where TNode : INode where TLinker : INode;
+        List<TLinkedByLinkedBy> GetLinkedByLinkedBy<TNode, TLinkedBy, TLinkedByLinkedBy>(string nodeId, Linkage linkage, Linkage linkageBy)
+            where TNode : INode
+            where TLinkedBy : INode
+            where TLinkedByLinkedBy : INode;
+
         List<MNode> GetNotLinked<TNode,TNotLinked>(string nodeId, Linkage linkage)
             where TNode : INode where TNotLinked : MNode;
         List<TLinked> GetNewLinkers<TNode, TLinked>(string nodeId, Linkage linkage, DateTime dateTime)

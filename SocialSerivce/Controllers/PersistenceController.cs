@@ -2,6 +2,7 @@
 using CommunityNetWork.Dal.Interfaces;
 using Newtonsoft.Json;
 using Social.BL.Models;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Web.Http;
@@ -18,17 +19,8 @@ namespace SocialSerivce.Controllers
             
             repos = new Repository(graphFactory);
         }
-        // GET: api/Persistence
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+        
 
-        // GET: api/Persistence/5
-        public string Get(int id)
-        {
-            return "value";
-        }
         [HttpPost]
         [Route("CreateProfile")]
          public IHttpActionResult CreateProfile([FromBody]Profile profile)
@@ -39,8 +31,23 @@ namespace SocialSerivce.Controllers
             else
                 return Content(HttpStatusCode.InternalServerError, false);
         }
-        
-        
+
+        [HttpGet]
+        [Route("GetProfileByUserName")]
+        public IHttpActionResult GetProfileByUserName(string userName)
+        {
+            try
+            {
+                List<Profile> profiles = repos.Get<Profile>("UserName", userName);
+                return Ok(profiles);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+        }
+
         // PUT: api/Persistence/5
         public void Put(int id, [FromBody]string value)
         {
