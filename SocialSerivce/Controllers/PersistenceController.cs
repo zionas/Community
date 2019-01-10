@@ -35,23 +35,11 @@ namespace SocialSerivce.Controllers
         {
             Profile p=repos.Add(profile);
             if (p.Equals(profile))
-            {
-                
-                    return Ok(p);
-            }
-                
+                return Ok(p);
             else
                 return Content(HttpStatusCode.InternalServerError, false);
         }
-        // POST: api/Persistence
-        public IHttpActionResult Post([FromBody]Profile profile)
-        {
-            Profile p = repos.Add(profile);
-            if (p.Equals(profile))
-                return Ok("created" + p.Id);
-            else
-                return Content(HttpStatusCode.InternalServerError, false);
-        }
+        
         
         // PUT: api/Persistence/5
         public void Put(int id, [FromBody]string value)

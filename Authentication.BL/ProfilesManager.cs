@@ -25,6 +25,7 @@ namespace Authentication.BL
             this.dBFactory = dBFactory;
 
             this._iDynamoDB = (IDynamoDB)dBFactory.Create(false);
+        }
 
 
         public Profile Login(string email, string password)
@@ -88,22 +89,6 @@ namespace Authentication.BL
             return profileConnected;
         }
 
-        //public Profile GetProfileDetails(string username)
-        //{
-        //    return dynamoDB.Get<Profile>(username, true);
-        //}
-
-        //public void Delete(string username)
-        //{
-        //    DeleteItemRequest request = new DeleteItemRequest
-        //    {
-        //        TableName = "Profiles",
-        //        Key = new Dictionary<string, AttributeValue>()
-        //        {
-        //            ["Email"] = new AttributeValue(username)
-        //        }
-        //    };
-        //    dynamoDB.Delete(request);
-        //}
+       
     }
 }

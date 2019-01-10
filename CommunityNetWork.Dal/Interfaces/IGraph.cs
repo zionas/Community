@@ -12,13 +12,15 @@ namespace CommunityNetWork.Dal.Interfaces
     {
         TNode Get<TNode>(string id) where TNode : INode;
         TNode Create<TNode>(TNode node) where TNode : INode;
-        void Put(INode node);
+        TNode Put<TNode>(TNode node) where TNode : INode;
         bool Delete<TNode>(string id) where TNode : INode;
 
-        bool CreateAndLink<TNode, TLinked>(string nodeId, TLinked linked, Linkage linkage)
-            where TNode : INode
+        TNew CreateAndLink<TNew, TLinked>(string linkedId, TNew newNode, Linkage linkage)
+            where TNew : INode
             where TLinked : INode;
-
+        TNew CreateAndLinkWithParams<TNew, TLinked>(string linkedId, TNew newNode, Linkage linkage, LinkParams linkParams)
+            where TNew : INode
+            where TLinked : INode;
         bool IsLinked<TNode, TLinked>(string nodeId, string linkedId, Linkage linkage)
             where TNode : INode where TLinked : INode;
 
@@ -28,8 +30,6 @@ namespace CommunityNetWork.Dal.Interfaces
         List<LinkedNode> GetLinksBy<TNode, TLinked>(MNode linkedBy, Linkage linkage)
             where TNode : INode
             where TLinked : INode;
-        
-        bool CreateAndLinkWithParams<TNode>(string nodeId, TNode linked, Linkage linkage, LinkParams linkParams) where TNode : INode;
 
         bool Link<TNode, TLinked>(string nodeId, string linkedId, Linkage linkage) where TNode : INode where TLinked : INode;
 
@@ -42,11 +42,12 @@ namespace CommunityNetWork.Dal.Interfaces
         List<TLinked> GetNodeLinks<TNode, TLinked>(string nodeId, Linkage linkage)
             where TNode : INode
             where TLinked : INode;
-         List<MNode> GetNodeNotLinks<TNode, TNotLinked>(string nodeId, Linkage linkage)
-            where TNode : INode
-            where TNotLinked : INode;
+        List<TNotLinked> GetNodeNotLinks<TNode, TNotLinked>(string nodeId, Linkage linkage)
+           where TNode : INode
+           where TNotLinked : INode;
 
-        List<TLinked> GetNodeNewLinks<TNode, TLinked>(string nodeId, Linkage linkage, DateTime dateTime) where TNode : INode;
+
+       List<TLinked> GetNodeNewLinks<TNode, TLinked>(string nodeId, Linkage linkage, DateTime dateTime) where TNode : INode;
 
         List<TLinkedBy> GetNodeLinksBy<TNode, TLinkedBy>(string nodeId, Linkage linkage) 
             where TNode : INode

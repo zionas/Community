@@ -10,7 +10,7 @@ using CommunityNetWork.Common.Enums;
 using CommunityNetWork.Dal;
 using CommunityNetWork.Dal.Interfaces;
 using Newtonsoft.Json;
-using SocialSerivce.Models;
+using Social.BL.Models;
 
 namespace ConsoleApp1
 {
@@ -190,7 +190,7 @@ namespace ConsoleApp1
         }
         static void Main(string[] args)
         {
-              // string p1=Create();
+               string p1=Create();
             //GetNotBlocked(p1);
              // string p2 = Create();
               //Follow(p1, p2);
