@@ -15,19 +15,15 @@ using CommunityNetWork.Dal.Interfaces;
 
 namespace CommunityNetWork.Dal
 {
-   
-    public class DynamoDBConnector:IDynamoDB
+
+    public class DynamoDBConnector : IDynamoDB
     {
 
         static bool connected = false;
         static AmazonDynamoDBClient _client = null;
-        //static string accessKey = "AKIAJK4VO4LM4K2N7STA";
-        //static string secretKey = "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";
-        static string pwd = "H80'[R}TdRMG";
-        static string region = "us-east-1";
         static ProvisionedThroughput provisionedThroughput;
-        
-        
+
+
         internal DynamoDBConnector(bool useDynamoDBLocal)
         {
             if (_client != null)
@@ -36,10 +32,9 @@ namespace CommunityNetWork.Dal
             {
                 _client = GetDynamoDBClient(useDynamoDBLocal);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                string target=useDynamoDBLocal?" Local ":"";
-                PrintException(e, "failed to create {0} Client" + target);
+                string target = useDynamoDBLocal ? " Local " : "";
                 throw e;
             }
             connected = true;
@@ -50,22 +45,22 @@ namespace CommunityNetWork.Dal
 
             };
             Console.WriteLine("connected successfully");
-            
+
         }
-        
+
 
         static AmazonDynamoDBClient GetDynamoDBClient(bool useDynamoDBLocal)
         {
             AmazonDynamoDBClient client;
-           
-                if (useDynamoDBLocal)
-                    client= GetLocalClient();
-                else
-                    client = GetWebClient();
-            
+
+            if (useDynamoDBLocal)
+                client = GetLocalClient();
+            else
+                client = GetWebClient();
+
             return client;
         }
-        
+
 
         static string GetTableName(Type type)
         {
@@ -79,30 +74,17 @@ namespace CommunityNetWork.Dal
 
             return new AmazonDynamoDBClient(ddbConfig);
         }
-        
-    
 
-     static AmazonDynamoDBClient GetWebClient()
-    {
-        //var credentials = new BasicAWSCredentials(accessKey, secretKey);
-        return new AmazonDynamoDBClient();
-    }
-        
 
-        static void PrintException(Exception ex,string msg)
+
+        static AmazonDynamoDBClient GetWebClient()
         {
-
-            Console.WriteLine(msg+":"+ex + "::" + ex.Message);
-            Exception e = ex.InnerException;
-
-            while (e != null)
-            {
-                Console.WriteLine("Inner::" + e.Message);
-                e = e.InnerException;
-            }
-            
+            //var credentials = new BasicAWSCredentials(accessKey, secretKey);
+            return new AmazonDynamoDBClient();
         }
-        
+
+
+
 
         static AttributeDefinition GetAttributeDefinition(PropertyInfo p)
         {
@@ -113,7 +95,7 @@ namespace CommunityNetWork.Dal
                 AttributeType = type == typeof(string) ? "S" : type == typeof(bool) ? "B" : "N"
             };
         }
-        
+
 
         static KeyType GetKeyType(PropertyInfo p)
         {
@@ -122,7 +104,7 @@ namespace CommunityNetWork.Dal
                 : p.GetCustomAttribute(typeof(DynamoDBRangeKeyAttribute), true) != null ?
                 KeyType.RANGE : null;
         }
-        
+
 
         static KeySchemaElement GetSchemaElement(PropertyInfo p)
         {
@@ -136,9 +118,9 @@ namespace CommunityNetWork.Dal
 
                };
         }
-        
 
-         CreateTableRequest GetCreateTableRequest(Type type)
+
+        CreateTableRequest GetCreateTableRequest(Type type)
         {
             List<AttributeDefinition> attrDets = new List<AttributeDefinition>();
             List<KeySchemaElement> keys = new List<KeySchemaElement>();
@@ -160,7 +142,7 @@ namespace CommunityNetWork.Dal
                 ProvisionedThroughput = provisionedThroughput
             };
         }
-        
+
 
         public async Task<bool> AddModel(Type type)
         {
@@ -173,14 +155,13 @@ namespace CommunityNetWork.Dal
             }
             catch (Exception ex)
             {
-                PrintException(ex, "Failed to create table");
                 throw ex;
             }
             return true;
         }
-        
 
-        public bool  RemoveModel(Type type)
+
+        public bool RemoveModel(Type type)
         {
             string tableName = GetTableName(type);
 
@@ -188,24 +169,24 @@ namespace CommunityNetWork.Dal
             DeleteTableResponse response;
             try
             {
-                response= _client.DeleteTable(request);
+                response = _client.DeleteTable(request);
                 if (response.HttpStatusCode == OK)
                     return true;
-                
+
             }
-            catch(ResourceNotFoundException)
+            catch (ResourceNotFoundException)
             {
-                
+
             }
             return false;
 
-            
-        }
-        
 
-         static DynamoDBEntry CastToDynamoDbEntryType(object value)
+        }
+
+
+        static DynamoDBEntry CastToDynamoDbEntryType(object value)
         {
-            
+
             if (value is char)
                 return (char)value;
             else if (value is string)
@@ -237,16 +218,16 @@ namespace CommunityNetWork.Dal
             else return default(DynamoDBEntry);
 
         }
-        
 
-         static void SetEntry(Document doc,PropertyInfo p, object model)
+
+        static void SetEntry(Document doc, PropertyInfo p, object model)
         {
             object value = p.GetValue(model);
             if (p.GetCustomAttribute(typeof(DynamoDBIgnoreAttribute), true) == null)
 
                 doc[p.Name] = CastToDynamoDbEntryType(value);
         }
-        
+
 
         public void Add<T>(T model)
         {
@@ -261,10 +242,10 @@ namespace CommunityNetWork.Dal
             table.PutItem(doc);
 
         }
-        
 
-        static  GetItemOperationConfig GetModelConfig(Type type, bool constintence)
-            {
+
+        static GetItemOperationConfig GetModelConfig(Type type, bool constintence)
+        {
             var attributesToGet = new List<string>();
             foreach (PropertyInfo p in type.GetProperties())
             {
@@ -277,25 +258,25 @@ namespace CommunityNetWork.Dal
                 ConsistentRead = constintence
             };
         }
-        
 
-        public T Get<T>(Primitive hashKey,bool constintence)
+
+        public T Get<T>(Primitive hashKey, bool constintence)
         {
             Type type = typeof(T);
-            
-            GetItemOperationConfig config = GetModelConfig(type,constintence);
+
+            GetItemOperationConfig config = GetModelConfig(type, constintence);
             Table table = Table.LoadTable(_client, GetTableName(type));
             Document doc = table.GetItem(hashKey, config);
             return JsonConvert.DeserializeObject<T>(doc.ToJson());
-            
-        }
-            
 
-              async Task<bool> CreateTable(CreateTableRequest request)
+        }
+
+
+        async Task<bool> CreateTable(CreateTableRequest request)
         {
             if (!connected)
                 return false;
-            
+
             try
             {
                 bool exists = await TableExists(request.TableName);
@@ -306,7 +287,7 @@ namespace CommunityNetWork.Dal
             }
             catch (Exception e)
             {
-                 Console.WriteLine(e + e.Message);
+                Console.WriteLine(e + e.Message);
                 throw new OperationCanceledException(e.Message + ":cant check if table exist");
 
             }
@@ -315,30 +296,29 @@ namespace CommunityNetWork.Dal
             {
                 Console.WriteLine("  -- Creat Table {0}...", request.TableName);
                 response = await _client.CreateTableAsync(request);
-                if(response.HttpStatusCode==OK)
-                Console.WriteLine("     -- Created the \"{0}\" table successfully!", request.TableName);
+                if (response.HttpStatusCode == OK)
+                    Console.WriteLine("     -- Created the \"{0}\" table successfully!", request.TableName);
             }
             catch (Exception ex)
             {
-                PrintException(ex," FAILED to create the new table, because: {0}."+ ex.Message);
                 throw ex;
             }
 
-            if(response.TableDescription.TableStatus==TableStatus.ACTIVE)
-               return true;
+            if (response.TableDescription.TableStatus == TableStatus.ACTIVE)
+                return true;
             return false;
-                        
+
         }
 
-        
 
-         async Task<bool> TableExists(string tableName)
+
+        async Task<bool> TableExists(string tableName)
         {
             DescribeTableResponse descResponse;
             try
             {
                 ListTablesResponse tblResponse = await _client.ListTablesAsync();
-                
+
                 if (tblResponse.TableNames.Contains(tableName))
                 {
                     Console.WriteLine("     A table named {0} already exists in DynamoDB!", tableName);
@@ -356,7 +336,7 @@ namespace CommunityNetWork.Dal
             }
             catch (Exception ex)
             {
-                 throw ex;
+                throw ex;
             }
 
             return false;
@@ -366,9 +346,9 @@ namespace CommunityNetWork.Dal
         {
             _client.Dispose();
             _client = null;
-            
+
         }
-        
+
 
     }
 }

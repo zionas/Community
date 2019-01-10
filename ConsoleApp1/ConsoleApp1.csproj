@@ -89,7 +89,7 @@
       <Name>CommunityNetWork.Dal</Name>
     </ProjectReference>
     <ProjectReference Include="..\Social.BL\Social.BL.csproj">
-      <Project>{5f9d868f-3c1a-4a38-828c-3f641a2af258}</Project>
+      <Project>{5F9D868F-3C1A-4A38-828C-3F641A2AF258}</Project>
       <Name>Social.BL</Name>
     </ProjectReference>
     <ProjectReference Include="..\SocialSerivce\SocialSerivce.csproj">
