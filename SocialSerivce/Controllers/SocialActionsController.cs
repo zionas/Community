@@ -2,11 +2,8 @@
 using CommunityNetWork.Common.Enums;
 using Social.BL.Interfaces;
 using Social.BL.Models;
-
 using System;
-using System.Collections.Generic;
 using System.Web.Http;
-using CommunityNetwork.Common.Inerfaces;
 using CommunityNetwork.Common;
 
 namespace SocialSerivce.Controllers
@@ -17,7 +14,7 @@ namespace SocialSerivce.Controllers
     {
         ICommunication _com;
         IRepository _repos;
-        public SocialActionsController(ICommunication com,IRepository repos)//IGraphFactory graphFactory)
+        public SocialActionsController(ICommunication com,IRepository repos)
         {
             _com = com;
             _repos = repos;

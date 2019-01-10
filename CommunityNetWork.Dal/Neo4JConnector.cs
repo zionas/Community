@@ -32,33 +32,46 @@ namespace CommunityNetWork.Dal
     }
     public class Neo4jConnector:IGraph
     {
-        const string CreateFormat = "(n:{0}{{newNode}})";
-        const string MatchLinkageFormat = "(node:{0})<-[r:{1}]-(linked:{2})";
-        const string MatchByLinkageFormat = "(node:{0})-[r:{1}]->(linkedBy:{2})";
-        const string MatchByLinkageByLinkageFormat = "(node:{0})-[r1:{1}]->(linkedby:{2})-[r2:{3}]->(linkedbylinkedby:{4})";
+        const string MatchLabelFormat = "(node:{0})";
+        const string CreateFormat = "(node:{0}{{newNode}})";
+        const string MatchDeleteLabelFormat = "(node:{0})-[r]-()";
+        const string MatchOneDefinedLinkageFormat = "(node:{0})<-[r:{1}]-(linked:{2})";
+        const string MatchByDefinedLinkageFormat = "(node:{0})-[r:{1}]->(linkedBy:{2})";
+        const string MatchAnyDefinedLinkageFormat = "(node:{0})-[r:{1}]-(linkedBy:{2})";
+        const string MatchByDefinedLinkageByLinkageFormat = "(node:{0})-[r1:{1}]->(linkedby:{2})-[r2:{3}]->(linkedbylinkedby:{4})";
+        const string MatchOneLinkageFormat = "(node:{0})<-[:{1}]-(linked:{2})";
+        const string MatchByLinkageFormat = "(node:{0})-[:{1}]->(linked:{2})";
+        const string MatchAnyLinkageFormat = "(node)-[:{0}]-(linked)";
+        const string MatchByLinkageByLinkageFormat = "(node:{0})-[:{1}]->(linkedby:{2})-[:{3}]->(linkedbylinkedby:{4})";
         const string MatchStringLinkageFormat = "{0}{1}[r:{2}]{3}(linked:{4})";
         const string ByLinkageFormat = "(node)-[:{0}]->(linkedBy)";
-        const string CreateAndLinkFormat = "(node)<-[:{0}]-(linked:{1}{{newNode}})";
-        const string CreateAndLinkWithParamsFormat = "(node)<-[:{0}{{relParam}}]-(linked:{1}{{newNode}})";
+        const string CreateAndLinkFormat = "(linked:{0})-[:{1}]->(node:{2}{{newNode}})";
+        const string CreateAndLinkWithParamsFormat = "(linked:{0})-[:{0}{{relParam}}]->(node:{1}{{newNode}})";
+        
+        static readonly string AnyLinkageFormat = "(node1)<-[:{0}]-(node2)";
         static readonly string OneLinkageFormat = "(node)<-[:{0}]-(linked)";
         static readonly string OneLinkageWithParamsFormat = "(node)<-[:{0} {{relParam}}]-(linked)";
         static readonly string ByLinkageWithParamsFormat = "(node)-[:{0} {{relParam}}]->(linkedBy)";
 
         GraphClient _graph;
         string _user = "neo4j";
-        string _password = "zzneo4j";
-        string _uri = "http://localhost:7474/db/data";
+        string _password = "omer2803";//"zzneo4j";
+        string _uri; /*"http://ec2-18-217-80-168.us-east-2.compute.amazonaws.com:7474";*/
+        
 
-        public Neo4jConnector(bool useLocal=true,
-                              string uri = "http://localhost:7474/db/data",
-                              string user = "neo4j",
-                              string password = "zzneo4j")
+        public Neo4jConnector(bool useLocal = true)
+                             
         {
 
-            _user = user;
-            _password = password;
-            _uri = uri;
-            _graph = new GraphClient(new Uri(uri), user, password);
+            
+            if (useLocal)
+            {
+                _password = "zzneo4j";
+                _uri = "http://localhost:7474/db/data";
+            }
+            
+           
+            _graph = new GraphClient(new Uri(_uri), _user, _password);
         }
         
         
@@ -149,17 +162,35 @@ namespace CommunityNetWork.Dal
                  .Results.FirstOrDefault();
 
         }
-        
+
+        public List<TNode> Get<TNode>() where TNode : INode
+        {
+            string typeName = TypeName<TNode>();
+            
+            return Connect().Cypher.Match("(node:" + typeName + ")")
+                 .Return(node => node.As<TNode>())
+                 .Results.ToList();
+
+        }
+
 
         static string GetMatchLabelFormat(int counter)
         {
             string labelFormat = "";
             if (counter > 0)
                 labelFormat += ",";
-            labelFormat += "n" + (counter + 1) + ":{" + counter + "})";
+            labelFormat += "node" + (counter + 1) + ":{" + counter + "})";
             return labelFormat;
         }
-        
+
+        static string GetMatchLabelFormat(int counter,string tag)
+        {
+            string labelFormat = "";
+            if (counter > 0)
+                labelFormat += ",";
+            labelFormat += "("+tag  + ":{" + counter + "})";
+            return labelFormat;
+        }
         static string GetMatchLabelString<TNode>(string tag)
         {
             string format = "({0}:{1})";
@@ -170,7 +201,7 @@ namespace CommunityNetWork.Dal
         static string GetMatchLabelString<TNode>()
         {
 
-            string format = "(" + GetMatchLabelFormat(0) + ")";
+            string format = MatchLabelFormat ;
             return string.Format(format, TypeName<TNode>());
         }
         
@@ -178,32 +209,46 @@ namespace CommunityNetWork.Dal
         static string GetMatchLabelsString(params MNode[] nodes)
         {
             string[] nodesLabels = new string[nodes.Length];
-            string format = "(";
+            string format = "";//"(";
             for (int i = 0; i < nodes.Length; i++)
             {
                 format += GetMatchLabelFormat(i);
                 nodesLabels[i] = nodes[i].NodeName;
             }
-            format += ")";
+            //format += ")";
             return string.Format(format, nodesLabels);
         }
-        
+
+        static string GetMatchLabelsString<TNode>(params string[] nodesTags)
+            where TNode:INode
+        {
+            string[] nodesLabels = new string[nodesTags.Length];
+            string format = "";
+            for (int i = 0; i < nodesTags.Length; i++)
+            {
+                format += GetMatchLabelFormat(i,nodesTags[i]);
+                nodesLabels[i] = TypeName<TNode>();
+            }
+            
+            return string.Format(format, nodesLabels);
+        }
+
 
         static string GetMatchLinkageString<TNode,TLinked>(Linkage linkage)
         {
-            return string.Format(MatchLinkageFormat, TypeName<TNode>(),linkage,TypeName<TLinked>());
+            return string.Format(MatchOneDefinedLinkageFormat, TypeName<TNode>(),linkage,TypeName<TLinked>());
         }
         
 
         static string GetMatchByLinkageString<TNode, TLinkedBy>(Linkage linkage)
         {
-            return string.Format(MatchByLinkageFormat, TypeName<TNode>(),linkage, TypeName<TLinkedBy>());
+            return string.Format(MatchByDefinedLinkageFormat, TypeName<TNode>(),linkage, TypeName<TLinkedBy>());
         }
         
 
         static string GetMatchByLinkageByLinkageString<TNode, TLinkedBy,TLinkedByLinkedBy>(Linkage linkage,Linkage linkageBy)
         {
-            return string.Format(MatchByLinkageByLinkageFormat, TypeName<TNode>(),linkage, TypeName<TLinkedBy>(), linkageBy,TypeName<TLinkedByLinkedBy>());
+            return string.Format(MatchByDefinedLinkageByLinkageFormat, TypeName<TNode>(),linkage, TypeName<TLinkedBy>(), linkageBy,TypeName<TLinkedByLinkedBy>());
         }
         
 
@@ -212,10 +257,51 @@ namespace CommunityNetWork.Dal
         {
             return string.Format(CreateFormat, TypeName<TNode>());
         }
-
-        static string GetCreateAndLinkString<TLinked>(Linkage linkage)
+        private static string GetOneLinkageString(Linkage linkage)
         {
-            return string.Format(CreateAndLinkFormat, linkage, TypeName<TLinked>());
+            return string.Format(OneLinkageFormat, linkage);
+        }
+        static string GetMatchDeleteLabelString<TNode>()
+        {
+            return string.Format(MatchDeleteLabelFormat,TypeName<TNode>());
+        }
+
+        private static string GetMatchOneDefinedLinkageString<TNode, TLinked>(Linkage linkage)
+        {
+            return string.Format(MatchOneDefinedLinkageFormat, TypeName<TNode>(), linkage, TypeName<TLinked>());
+        }
+
+
+        private static string GetMatchAnyDefinedLinkageString<TNode, TLinked>(Linkage linkage)
+        {
+            return string.Format(MatchAnyDefinedLinkageFormat, TypeName<TNode>(), linkage, TypeName<TLinked>());
+        }
+        private static string GetMatchAnyLinkageString<TNode, TLinked>(Linkage linkage)
+        {
+            return string.Format(MatchAnyLinkageFormat, TypeName<TNode>(), linkage, TypeName<TLinked>());
+        }
+
+
+        private static string GetMatchAnyLinkageString(Linkage linkage)
+        {
+            return string.Format(MatchAnyLinkageFormat, linkage);
+        }
+        private static string GetMatchOneLinkageString<TNode, TLinked>(Linkage linkage)
+        {
+            return string.Format(MatchOneLinkageFormat, TypeName<TNode>(), linkage, TypeName<TLinked>());
+        }
+
+        private static string GetOneLinkageWithParamsString(Linkage linkage)
+        {
+            return string.Format(OneLinkageWithParamsFormat, linkage);
+        }
+        static string GetCreateAndLinkString<TLinked,TNew>(Linkage linkage)
+        {
+            return string.Format(CreateAndLinkFormat, TypeName < TLinked >(), linkage, TypeName<TNew>());
+        }
+        static string GetCreateAndLinkWithParamsString<TLinked, TNew>(Linkage linkage)
+        {
+            return string.Format(CreateAndLinkWithParamsFormat, TypeName<TLinked>(), linkage, TypeName<TNew>());
         }
         static void CreateByLinkageWithParam(ICypherFluentQuery query, Linkage linkage, LinkParams linkParams)
         {
@@ -298,22 +384,22 @@ namespace CommunityNetWork.Dal
        
         
 
-        public TNode Create<TNode>(TNode node) where TNode:INode
+        public TNode Create<TNode>(TNode newNode) where TNode:INode
         {
-            node.ResetId();
+            newNode.ResetId();
             string create = GetCreateString<TNode>();
             return Connect().Cypher
                 .Create(create)
-                .WithParam("newNode", node)
-                .Return(n => n.As<TNode>())
+                .WithParam("newNode", newNode)
+                .Return(node => node.As<TNode>())
                  .Results.FirstOrDefault();
         }
         
 
-        public void Put(INode node)
+        public TNode Put<TNode>(TNode node) where TNode:INode
         {
             string merge = string.Format("(n:{0}", node.GetType().Name) + "{Id:{id}})";
-            Connect().Cypher
+            return Connect().Cypher
            .Merge(merge)
            .OnCreate()
            .Set("n = {node}")
@@ -322,23 +408,25 @@ namespace CommunityNetWork.Dal
                id = node.Id,
                node
            })
-           .ExecuteWithoutResults();
+           .Return(n => n.As<TNode>())
+                 .Results.FirstOrDefault();
         }
         
 
         public bool Delete<TNode>(string id) where TNode : INode
         {
             string typeName = TypeName<TNode>();
+            string match = GetMatchDeleteLabelString<TNode>();
             var query = CreateWhereEqualsLambda<TNode>("Id", id);
             try
             {
-                var count = Connect().Cypher.Match("(node:" + typeName + ")")
+                var count = Connect().Cypher.Match(match)
                 .Where(query)
                  .Return(node => node.As<TNode>()).Results.Count();
                 Console.WriteLine("removing {0} {1}s", count, typeName);
                 Connect().Cypher.Match("(node:" + typeName + ")")
                 .Where(query)
-                .Delete("node")
+                .Delete("r,node")
                 .ExecuteWithoutResults();
             }
             catch (Exception e)
@@ -349,7 +437,30 @@ namespace CommunityNetWork.Dal
             return true;
 
         }
-        
+
+
+        public bool Delete<TNode>() where TNode : INode
+        {
+            string typeName = TypeName<TNode>();
+            string match = GetMatchDeleteLabelString<TNode>();
+
+            try
+            {
+                /*var count = Connect().Cypher.Match("(node:" + typeName + ")")
+                .Return(node => node.As<TNode>()).Results.Count();
+                Console.WriteLine("removing {0} {1}s", count, typeName);*/
+                Connect().Cypher.Match(match)
+                .Delete("r,node")
+                .ExecuteWithoutResults();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            return true;
+
+        }
         public bool IsLinked<TNode,TLinked>(string nodeId,string linkedId,Linkage linkage)
             where TNode:INode where TLinked:INode
         {
@@ -384,39 +495,52 @@ namespace CommunityNetWork.Dal
             return linksBy > 0;
         }
 
-        public bool CreateAndLink<TNode,TLinked>(string nodeId, TLinked linked, Linkage linkage) 
-            where TNode : INode
+        public TNew CreateAndLink<TNew,TLinked>(string linkedId, TNew newNode, Linkage linkage) 
+            where TNew : INode
             where TLinked :INode 
         {
-            linked.ResetId();
-            var match = GetMatchLabelString<TNode>();
-            var createAndLink = GetCreateAndLinkString<TLinked>(linkage);
-            var query = CreateWhereEqualsLambda<TNode>("Id", nodeId);
+            newNode.ResetId();
+            var linkedMatch = GetMatchLabelString<TLinked>("linked");
+            var link = GetOneLinkageString(linkage);
+            var findLinked = CreateWhereEqualsLambda<TLinked>("linked", "Id", linkedId);
+            string create = GetCreateString<TNew>();
 
-            Connect().Cypher
-            .Match(match)
-            .Where(query)
-            .Create(createAndLink)
-            .WithParam("newNode", linked)
-            .ExecuteWithoutResults();
-            return true;
+            return Connect().Cypher
+                .Create(create)
+                .WithParam("newNode", newNode)
+                .With("node")
+                .Match(linkedMatch)
+                .Where(findLinked)
+               .Create(link)
+               .Return(node => node.As<TNew>())
+                .Results.FirstOrDefault();
+
+           
         }
         
 
-        public bool CreateAndLinkWithParams<TNode>(string nodeId, TNode linked, Linkage linkage, LinkParams linkParams) where TNode : INode
+        public TNew CreateAndLinkWithParams<TNew,TLinked>(string linkedId, TNew newNode, Linkage linkage, LinkParams linkParams) 
+            where TNew: INode
+            where TLinked:INode
         {
-            var match = GetMatchLabelString<TNode>();
-            var createAndLink = string.Format(CreateAndLinkWithParamsFormat, linkage, linked.GetType().Name);
-            var query = CreateWhereEqualsLambda<TNode>("Id", nodeId);
+           
+            var linkedMatch = GetMatchLabelString<TLinked>("linked");
+            var link = GetOneLinkageWithParamsString(linkage);
+            var findLinked = CreateWhereEqualsLambda<TLinked>("linked", "Id", linkedId);
+            string create = GetCreateString<TNew>();
 
-            Connect().Cypher
-            .Match(match)
-            .Where(query)
-            .Create(createAndLink)
-            .WithParam("newNode", linked)
-            .WithParam("relParam", linkParams)
-            .ExecuteWithoutResults();
-            return true;
+            return Connect().Cypher
+                .Create(create)
+                .WithParam("newNode", newNode)
+                .With("node")
+                .Match(linkedMatch)
+                .Where(findLinked)
+                .Create(link)
+                .WithParam("relParam", linkParams)
+                .Return(node => node.As<TNew>())
+                .Results.FirstOrDefault();
+
+            
         }
         
 
@@ -424,7 +548,7 @@ namespace CommunityNetWork.Dal
         {
             var nodeMatch = GetMatchLabelString<TNode>("node");
             var linkedMatch = GetMatchLabelString<TLinked>("linked");
-            var link = string.Format(OneLinkageFormat, linkage);
+            var link = GetOneLinkageString( linkage);
             var findNode = CreateWhereEqualsLambda<TNode>("node", "Id", nodeId);
             var findLinked = CreateWhereEqualsLambda<TLinked>("linked", "Id", linkedId);
 
@@ -436,8 +560,8 @@ namespace CommunityNetWork.Dal
                .ExecuteWithoutResults();
             return true;
         }
-        
 
+        
         public bool UnLink<TNode, TLinked>(string nodeId, string linkedId, Linkage linkage) where TNode : INode where TLinked : INode
         {
             
@@ -490,19 +614,19 @@ namespace CommunityNetWork.Dal
 
         }
 
-        public List<MNode> GetNodeNotLinks<TNode, TUnLinked>(string nodeId, Linkage linkage)
+        public List<TNotLinked> GetNodeNotLinks<TNode, TNotLinked>(string nodeId, Linkage linkage)
             where TNode : INode
-            where TUnLinked : INode
+            where TNotLinked : INode
         {
             var findNode = CreateWhereEqualsLambda<TNode>("Id", nodeId);
             
-            string match = GetMatchLinkageString<TNode, TUnLinked>(linkage);
-            var noLinkage = "not " +match;
+            string match = GetMatchLabelsString<TNode>("node","linked");
+            var noLinkage = "not " +GetMatchAnyLinkageString<TNode,TNotLinked>(linkage);
             return Connect().Cypher
             .OptionalMatch(match)
             .Where(findNode)
             .AndWhere(noLinkage)
-            .Return(linked => linked.As<MNode>())
+            .Return(node => node.As<TNotLinked>())
             .Results.ToList();
 
         }

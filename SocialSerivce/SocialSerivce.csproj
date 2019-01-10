@@ -136,6 +136,7 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\PersistenceController.cs" />
+    <Compile Include="Controllers\PublishController.cs" />
     <Compile Include="Controllers\SocialActionsController.cs" />
     <Compile Include="Controllers\TokenedApiController.cs" />
     <Compile Include="Global.asax.cs">

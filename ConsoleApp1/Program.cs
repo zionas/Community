@@ -190,7 +190,7 @@ namespace ConsoleApp1
         }
         static void Main(string[] args)
         {
-              // string p1=Create();
+               string p1=Create();
             //GetNotBlocked(p1);
              // string p2 = Create();
               //Follow(p1, p2);
