@@ -34,7 +34,7 @@ namespace CommunityNetWork.Dal
     {
         const string MatchLabelFormat = "(node:{0})";
         const string CreateFormat = "(node:{0}{{newNode}})";
-        const string MatchDeleteLabelFormat = "(node:{0})-[r]-()";
+        const string MatchDeleteLabelFormat = "(unlinkednode:{0}),(linkednode:{0})-[r]-()";
         const string MatchOneDefinedLinkageFormat = "(node:{0})<-[r:{1}]-(linked:{2})";
         const string MatchByDefinedLinkageFormat = "(node:{0})-[r:{1}]->(linkedBy:{2})";
         const string MatchAnyDefinedLinkageFormat = "(node:{0})-[r:{1}]-(linkedBy:{2})";
@@ -42,6 +42,7 @@ namespace CommunityNetWork.Dal
         const string MatchOneLinkageFormat = "(node:{0})<-[:{1}]-(linked:{2})";
         const string MatchByLinkageFormat = "(node:{0})-[:{1}]->(linked:{2})";
         const string MatchAnyLinkageFormat = "(node)-[:{0}]-(linked)";
+        
         const string MatchByLinkageByLinkageFormat = "(node:{0})-[:{1}]->(linkedby:{2})-[:{3}]->(linkedbylinkedby:{4})";
         const string MatchStringLinkageFormat = "{0}{1}[r:{2}]{3}(linked:{4})";
         const string ByLinkageFormat = "(node)-[:{0}]->(linkedBy)";
@@ -163,6 +164,8 @@ namespace CommunityNetWork.Dal
 
         }
 
+        
+
         public List<TNode> Get<TNode>() where TNode : INode
         {
             string typeName = TypeName<TNode>();
@@ -173,6 +176,17 @@ namespace CommunityNetWork.Dal
 
         }
 
+
+        public List<TNode> Get<TNode>(string propertyName,object value) where TNode : INode
+        {
+            string typeName = TypeName<TNode>();
+            var query = CreateWhereEqualsLambda<TNode>(propertyName, value);
+            return Connect().Cypher.Match("(node:" + typeName + ")")
+                .Where(query)
+                 .Return(node => node.As<TNode>())
+                 .Results.ToList();
+
+        }
 
         static string GetMatchLabelFormat(int counter)
         {
@@ -234,7 +248,7 @@ namespace CommunityNetWork.Dal
         }
 
 
-        static string GetMatchLinkageString<TNode,TLinked>(Linkage linkage)
+        static string GetOneMatchLinkageString<TNode,TLinked>(Linkage linkage)
         {
             return string.Format(MatchOneDefinedLinkageFormat, TypeName<TNode>(),linkage,TypeName<TLinked>());
         }
@@ -278,14 +292,14 @@ namespace CommunityNetWork.Dal
         }
         private static string GetMatchAnyLinkageString<TNode, TLinked>(Linkage linkage)
         {
-            return string.Format(MatchAnyLinkageFormat, TypeName<TNode>(), linkage, TypeName<TLinked>());
+            return string.Format(MatchAnyDefinedLinkageFormat, TypeName<TNode>(), linkage, TypeName<TLinked>());
         }
-
-
         private static string GetMatchAnyLinkageString(Linkage linkage)
         {
-            return string.Format(MatchAnyLinkageFormat, linkage);
+            return string.Format(MatchAnyLinkageFormat,  linkage );
         }
+
+       
         private static string GetMatchOneLinkageString<TNode, TLinked>(Linkage linkage)
         {
             return string.Format(MatchOneLinkageFormat, TypeName<TNode>(), linkage, TypeName<TLinked>());
@@ -450,7 +464,7 @@ namespace CommunityNetWork.Dal
                 .Return(node => node.As<TNode>()).Results.Count();
                 Console.WriteLine("removing {0} {1}s", count, typeName);*/
                 Connect().Cypher.Match(match)
-                .Delete("r,node")
+                .Delete("r,linkednode,unlinkednode")
                 .ExecuteWithoutResults();
             }
             catch (Exception e)
@@ -464,7 +478,7 @@ namespace CommunityNetWork.Dal
         public bool IsLinked<TNode,TLinked>(string nodeId,string linkedId,Linkage linkage)
             where TNode:INode where TLinked:INode
         {
-            var linkMatch = GetMatchLinkageString<TNode, TLinked>(linkage);
+            var linkMatch = GetOneMatchLinkageString<TNode, TLinked>(linkage);
             var findNode = CreateWhereEqualsLambda<TNode>("node", "Id", nodeId);
             var findLinked = CreateWhereEqualsLambda<TLinked>("linked", "Id", linkedId);
 
@@ -565,7 +579,7 @@ namespace CommunityNetWork.Dal
         public bool UnLink<TNode, TLinked>(string nodeId, string linkedId, Linkage linkage) where TNode : INode where TLinked : INode
         {
             
-            var linkMatch = GetMatchLinkageString<TNode,TLinked>(linkage);
+            var linkMatch = GetOneMatchLinkageString<TNode,TLinked>(linkage);
             
             var findNode = CreateWhereEqualsLambda<TNode>("node", "Id", nodeId);
             var findLinked = CreateWhereEqualsLambda<TLinked>("linked", "Id", linkedId);
@@ -599,17 +613,31 @@ namespace CommunityNetWork.Dal
         }
         
 
-        public List<TLinked> GetNodeLinks<TNode, TLinked>(string nodeId, Linkage linkage)
+        public List<TLinked> GetNodeLinkers<TNode, TLinked>(string nodeId, Linkage linkage)
             where TNode : INode 
             where TLinked:INode
         {
             var query = CreateWhereEqualsLambda<TNode>("Id", nodeId);
-            string match = GetMatchLinkageString<TNode, TLinked>(linkage);
+            string match = GetOneMatchLinkageString<TNode, TLinked>(linkage);
                 
             return Connect().Cypher
             .OptionalMatch(match)
             .Where(query)
             .Return(linked => linked.As<TLinked>())
+            .Results.ToList();
+
+        }
+        public List<TNode> GetNodeLinked<TNode, TLinker>(string linkerId, Linkage linkage)
+            where TNode : INode
+            where TLinker : INode
+        {
+            var query = CreateWhereEqualsLambda<TLinker>("linked","Id", linkerId);
+            string match = GetOneMatchLinkageString<TNode, TLinker>(linkage);
+
+            return Connect().Cypher
+            .OptionalMatch(match)
+            .Where(query)
+            .Return(node => node.As<TNode>())
             .Results.ToList();
 
         }
@@ -621,12 +649,12 @@ namespace CommunityNetWork.Dal
             var findNode = CreateWhereEqualsLambda<TNode>("Id", nodeId);
             
             string match = GetMatchLabelsString<TNode>("node","linked");
-            var noLinkage = "not " +GetMatchAnyLinkageString<TNode,TNotLinked>(linkage);
+            var noLinkage = "not " +GetMatchAnyLinkageString(linkage);
             return Connect().Cypher
             .OptionalMatch(match)
             .Where(findNode)
             .AndWhere(noLinkage)
-            .Return(node => node.As<TNotLinked>())
+            .Return(linked => linked.As<TNotLinked>())
             .Results.ToList();
 
         }
@@ -636,7 +664,7 @@ namespace CommunityNetWork.Dal
         {
             var findNode = CreateWhereEqualsLambda<TNode>("node", "Id", nodeId);
             var findLinkage = CreateWhereNewerLambda<LinkParams>(dateTime);
-            string match = GetMatchLinkageString<TNode, TLinked>(linkage);
+            string match = GetOneMatchLinkageString<TNode, TLinked>(linkage);
             return Connect().Cypher
             .OptionalMatch(match)
             .Where(findNode)
@@ -721,7 +749,7 @@ namespace CommunityNetWork.Dal
         where TNode : INode where TLinked : INode
         {
             //var query = CreateWhereEqualsLambda<TNode>("Id", nodeId);
-            string match = GetMatchLinkageString<TNode, TLinked>(linkage);
+            string match = GetOneMatchLinkageString<TNode, TLinked>(linkage);
                 
             var results = Connect().Cypher
             .OptionalMatch(match)

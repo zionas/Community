@@ -35,18 +35,8 @@ namespace SocialSerivce.Controllers
         {
             return "value";
         }
-        [HttpPost]
-        [Route("Follow")]
-        public IHttpActionResult Follow([FromBody]SocialAction socialAction)
-        {
-            string fromId = socialAction.FromId;
-            string toId = socialAction.ToId;
-            Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), "Follow");// socialAction.linkage);
-            _com.LinkProfiles(socialAction);
-            return Ok("Follows");
-                
-
-        }
+        
+        
         [HttpPost]
         [Route("SWLinkProfiles")]
         public IHttpActionResult SWLinkProfiles([FromBody]SocialAction socialAction)
@@ -54,7 +44,7 @@ namespace SocialSerivce.Controllers
             string fromId = socialAction.FromId;
             string toId = socialAction.ToId;
             Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
-            bool linked = socialAction.swch;//_com.IsLinked<Profile, Profile>(fromId, toId, linkage);
+            bool linked = socialAction.swch;
             if (linked)
                 _com.LinkProfiles(socialAction);
             else

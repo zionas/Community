@@ -27,6 +27,15 @@ namespace Social.BL.Models
 
             }
         }
+        public List<TNode> Get<TNode>(string propertyName,object value) where TNode : MNode
+        {
+            using (IGraph neo4j = (IGraph)_graphFactory.Create())
+            {
+                return neo4j.Get<TNode>(propertyName,value);
+
+            }
+        }
+
         public TNode Add<TNode>(TNode node) where TNode : MNode
         {
             using (IGraph graph = (IGraph)_graphFactory.Create())
