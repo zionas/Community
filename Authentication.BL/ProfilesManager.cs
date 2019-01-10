@@ -73,7 +73,7 @@ namespace Authentication.BL
             try
             {
                  profileConnected = _iDynamoDB.Get<Profile>(profile.Email, true);
-                if (profileConnected?.Id == profile.Id)
+                if (profileConnected!=null)
                 {
                     GenerateToken(profileConnected.Email);
                 }
