@@ -59,19 +59,18 @@ namespace CommunityNetWork.Dal
         GraphClient _graph;
         string _user = "neo4j";
         string _password = "omer2803";//"zzneo4j";
-        string _uri; /*"http://ec2-18-217-80-168.us-east-2.compute.amazonaws.com:7474";*/
+        string _uri = "http://ec2-18-217-80-168.us-east-2.compute.amazonaws.com:7474/db/data";
         
 
         public Neo4jConnector(bool useLocal = true)
-                             
         {
 
             
-            if (useLocal)
-            {
-                _password = "zzneo4j";
-                _uri = "http://localhost:7474/db/data";
-            }
+            //if (useLocal)
+            //{
+            //    _password = "zzneo4j";
+            //    _uri = "http://localhost:7474/db/data";
+            //}
             
            
             _graph = new GraphClient(new Uri(_uri), _user, _password);
