@@ -58,6 +58,7 @@
     <Compile Include="Inerfaces\INode.cs" />
     <Compile Include="Inerfaces\IPost.cs" />
     <Compile Include="Inerfaces\IProfileService.cs" />
+    <Compile Include="Inerfaces\IRecommendable.cs" />
     <Compile Include="Inerfaces\ISocial.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Inerfaces\IAuthor.cs" />

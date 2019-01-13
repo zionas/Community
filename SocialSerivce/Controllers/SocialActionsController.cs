@@ -44,7 +44,7 @@ namespace SocialSerivce.Controllers
             string fromId = socialAction.FromId;
             string toId = socialAction.ToId;
             Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
-            bool linked = socialAction.swch;
+            bool linked = socialAction.Switcher;
             if (linked)
                 _com.LinkProfiles(socialAction);
             else

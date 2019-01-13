@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CommunityNetwork.Common.Models
 {
-    public class Post: MNode,IPost
+    public class Post: MNode,IPost,IRecommendable
     {
         
         public VisibilityPermission VisibilityPermission { get; set; }

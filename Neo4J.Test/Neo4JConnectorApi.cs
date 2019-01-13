@@ -153,7 +153,7 @@ namespace Neo4J.Test
                 neo4j.Create(nA1);
                 neo4j.Create(nA2);
                 neo4j.Link<NodeA, NodeA>(nA1.Id, nA2.Id, Linkage.Follow);
-                result = neo4j.IsLinked<NodeA, NodeA>(nA1.Id, nA2.Id, Linkage.Follow);
+                result = neo4j.IsLinker<NodeA, NodeA>(nA1.Id, nA2.Id, Linkage.Follow);
                 
             }
             
@@ -179,6 +179,23 @@ namespace Neo4J.Test
         }
 
         [TestMethod]
+        public void TestGetNodeLinkers()
+        {
+            List<NodeA> list;
+            Init();
+            using (Neo4jConnector neo4j = new Neo4jConnector())
+            {
+                neo4j.Create(nA1);
+                neo4j.Create(nA2);
+                neo4j.Create(nA3);
+                neo4j.Link<NodeA, NodeA>(nA1.Id, nA2.Id, Linkage.Follow);
+                neo4j.Link<NodeA, NodeA>(nA1.Id, nA3.Id, Linkage.Follow);
+                list = neo4j.GetNodeLinkers<NodeA, NodeA>(nA1.Id, Linkage.Follow);
+            }
+            bool result = list.Contains(nA2) && list.Contains(nA3);
+            Assert.AreEqual(result, true);
+        }
+        [TestMethod]
         public void TestGetNodeNotLinks()
         {
             List<NodeA> list;
@@ -198,6 +215,7 @@ namespace Neo4J.Test
             Assert.AreEqual(result, true);
         }
 
+        
         [TestMethod]
         public void TestGetNodeLinkedByLinkedBy()
         {
@@ -209,10 +227,11 @@ namespace Neo4J.Test
                 neo4j.Create(nA1);
                 neo4j.Create(nA2);
                 neo4j.Create(nA3);
-                neo4j.Link<NodeA, NodeA>(nA1.Id, nA2.Id, Linkage.Follow);
-                neo4j.Link<NodeA, NodeA>(nA2.Id, nA3.Id, Linkage.Follow);
-
+                neo4j.Link<NodeA, NodeA>(nA2.Id, nA1.Id, Linkage.Follow);
+                neo4j.Link<NodeA, NodeA>(nA3.Id, nA2.Id, Linkage.Follow);
+                
                 list = neo4j.GetNodeLinkedByLinkedBy<NodeA, NodeA,NodeA>(nA1.Id, Linkage.Follow,Linkage.Follow);
+                
             }
 
             bool result =  list.Contains(nA3);
@@ -238,6 +257,31 @@ namespace Neo4J.Test
             bool result = dict[nA1].Contains(nA2) && dict[nA2].Contains(nA3);
             Assert.AreEqual(result, true);
         }
+        [TestMethod]
+        public void TestGetNodeNotLinksOnQuery()
+        {
+            List<NodeA> list;
+            Init();
+            using (Neo4jConnector neo4j = new Neo4jConnector())
+            {
+                neo4j.Delete<NodeA>();
+                neo4j.Create(nA1);
+                neo4j.Create(nA2);
+                neo4j.Create(nA3);
+                neo4j.Create(nA4);
+
+                neo4j.Link<NodeA, NodeA>(nA2.Id, nA1.Id, Linkage.Follow);
+                neo4j.Link<NodeA, NodeA>(nA3.Id, nA1.Id, Linkage.Follow);
+                neo4j.Link<NodeA, NodeA>(nA4.Id, nA1.Id, Linkage.Follow);
+                neo4j.Link<NodeA, NodeA>(nA1.Id, nA4.Id, Linkage.Block);
+                var results = neo4j.GetNodeLinkedByResults<NodeA, NodeA>(nA1.Id, Linkage.Follow);
+                list = neo4j.GetNodeNotLinks<NodeA, NodeA>(results, "linker as node1,linkedBy as node2", nA1.Id, Linkage.Block);
+            }
+
+            bool result = !list.Contains(nA4) && list.Contains(nA2) && list.Contains(nA3);
+            Assert.AreEqual(result, true);
+        }
+
 
         [TestMethod]
         public void TestCreatedAndLinked()

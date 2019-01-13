@@ -1,4 +1,5 @@
 ﻿using CommunityNetwork.Common.Models;
+using CommunityNetWork.Common.Enums;
 using CommunityNetWork.Dal;
 using CommunityNetWork.Dal.Interfaces;
 using Social.BL.Interfaces;
@@ -21,21 +22,23 @@ namespace Social.BL.Models
         
         public TNode Get<TNode>(string id) where TNode : MNode
         {
-            using (IGraph neo4j = (IGraph)_graphFactory.Create())
+            using (IGraph praph = (IGraph)_graphFactory.Create())
             {
-                return neo4j.Get<TNode>(id);
+                return praph.Get<TNode>(id);
 
             }
         }
-        public List<TNode> Get<TNode>(string propertyName,object value) where TNode : MNode
+        public List<TNode> Get<TNode>(string propertyName,object value) 
+            where TNode : MNode
         {
-            using (IGraph neo4j = (IGraph)_graphFactory.Create())
+            using (IGraph graph = (IGraph)_graphFactory.Create())
             {
-                return neo4j.Get<TNode>(propertyName,value);
+                return graph.Get<TNode>(propertyName,value);
 
             }
         }
 
+        
         public TNode Add<TNode>(TNode node) where TNode : MNode
         {
             using (IGraph graph = (IGraph)_graphFactory.Create())

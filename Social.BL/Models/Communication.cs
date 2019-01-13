@@ -46,7 +46,7 @@ namespace Social.BL.Models
         {
             using (IGraph graph = (IGraph)_graphFactory.Create())
             {
-                return graph.IsLinked<TNode, TLinked>(nodeId, linkedId, linkage);
+                return graph.IsLinker<TNode, TLinked>(nodeId, linkedId, linkage);
             }
         }
 
@@ -58,11 +58,11 @@ namespace Social.BL.Models
             }
         }
 
-        public List<TNode> GetLinkedBy<TNode, TLinker>(string linkerId, Linkage linkage) where TNode : INode where TLinker : INode
+        public List<TLinkedBy> GetLinkedBy<TLinker,TLinkedBy>(string linkerId, Linkage linkage) where TLinkedBy : INode where TLinker : INode
         {
             using (IGraph graph = (IGraph)_graphFactory.Create())
             {
-                return graph.GetNodeLinked<TNode, TLinker>(linkerId, linkage);
+                return graph.GetNodeLinkedBy<TLinker, TLinkedBy>(linkerId, linkage);
             }
         }
 
@@ -116,7 +116,40 @@ namespace Social.BL.Models
             }
         }
 
-        
+
+        public List<TLinker> GetNodeLinkers<TLinkedBy, TLinker>(string linkedById, Linkage linkage)
+            where TLinker : MNode
+            where TLinkedBy : MNode
+        {
+            using (IGraph graph = (IGraph)_graphFactory.Create())
+            {
+                return graph.GetNodeLinkers<TLinkedBy, TLinker>(linkedById, linkage);
+
+            }
+        }
+
+        public List<TLinker> GetNodeLinkedBy<TLinkedBy, TLinker>(string linkerId, Linkage linkage)
+            where TLinker : MNode
+            where TLinkedBy : MNode
+        {
+            using (IGraph graph = (IGraph)_graphFactory.Create())
+            {
+                return graph.GetNodeLinkedBy<TLinkedBy, TLinker>(linkerId, linkage);
+
+            }
+        }
+
+        public List<TLinker> GetNodeLinkedByNotLinks<TLinkedBy, TLinker>(string linkerId, Linkage linkage1, Linkage linkage2)
+            where TLinker : MNode
+            where TLinkedBy : MNode
+        {
+            using (IGraph graph = (IGraph)_graphFactory.Create())
+            {
+                var results = graph.GetNodeLinkedByResults<TLinkedBy, TLinker>(linkerId, linkage1);
+                return graph.GetNodeNotLinks<TLinkedBy, TLinker>(results, "linker as node1,linkedBy as node2", linkerId, linkage2);
+
+            }
+        }
         public void LinkProfiles(SocialAction socialAction,bool swch=true)
         {
             string linkerId = socialAction.FromId;
