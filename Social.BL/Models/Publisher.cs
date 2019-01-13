@@ -3,21 +3,26 @@ using CommunityNetwork.Common.Inerfaces;
 using CommunityNetwork.Common.Models;
 using CommunityNetWork.Common.Enums;
 using CommunityNetWork.Dal;
+using CommunityNetWork.Dal.Interfaces;
 using Social.BL.Interfaces;
 using System;
-
+using System.Collections.Generic;
 
 namespace Social.BL.Models
 {
     public class Publisher:IPublisher
     {
-
+        IGraphFactory _graphFactory;
+        public Publisher(IGraphFactory graphFactory)
+        {
+            _graphFactory = graphFactory;
+        }
         public TPublish Publish<TPublish>(string profileId, TPublish publish)
             where TPublish:IPost
         {
-            using (Neo4jConnector neo4j = new Neo4jConnector())
+            using (IGraph graph = (IGraph)_graphFactory.Create())
             {
-                return neo4j.CreateAndLinkWithParams<TPublish,Profile>(profileId, publish, Linkage.Publish, new LinkParams());
+                return graph.CreateAndLinkWithParams<TPublish,Profile>(profileId, publish, Linkage.Publish, new LinkParams());
             }
         }
         /**********************************/
@@ -25,13 +30,26 @@ namespace Social.BL.Models
             where TCommentable:IPost
         {
             Publish(profileId, comment);
-            using (Neo4jConnector neo4j = new Neo4jConnector())
+            using (IGraph graph = (IGraph)_graphFactory.Create())
             {
-                 neo4j.Link<Comment,TCommentable>(commentableId, comment.Id,Linkage.Comment);
+                 graph.Link<Comment,TCommentable>(commentableId, comment.Id,Linkage.Comment);
                 return comment;
             }
         }
 
-
+        public void RecommendAll<TRecommendable>(Dictionary<string,List<string>> recommended)
+            where TRecommendable:IRecommendable
+        {
+            using (IGraph graph = (IGraph)_graphFactory.Create())
+            {
+                foreach(string profileId in recommended.Keys)
+                {
+                    recommended[profileId].ForEach(
+                                    recommendableId => graph.Link<Profile, TRecommendable>(recommendableId, profileId, Linkage.Recommended));
+                }
+                    
+                
+            }
+        }
     }
 }

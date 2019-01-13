@@ -12,6 +12,6 @@ namespace Social.BL.Models
             public string FromId { get; set; }
             public string ToId { get; set; }
             public string linkage { get; set; }
-            public bool swch { get; set; }
+            public bool Switcher { get; set; }
     }
 }

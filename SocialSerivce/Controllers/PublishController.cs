@@ -23,11 +23,7 @@ namespace SocialSerivce.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        // GET: api/Publish/5
-        public string Get(int id)
-        {
-            return "value";
-        }
+       
 
         [HttpPost]
         [Route("PublishPost")]
@@ -62,13 +58,6 @@ namespace SocialSerivce.Controllers
             
         }
 
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/Publish/5
-        public void Delete(int id)
-        {
-        }
+        
     }
 }

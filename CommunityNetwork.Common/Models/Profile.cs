@@ -6,7 +6,7 @@ using System;
 
 namespace CommunityNetwork.Common
 {
-    public class Profile : MNode, ISocial, IAuthor
+    public class Profile : MNode, ISocial, IAuthor,IRecommendable
     {
         [DynamoDBHashKey]
         public string Email { get; set; }
