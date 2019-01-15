@@ -23,38 +23,38 @@ namespace Social.BL.Models
             _graphFactory = graphFactory;
         }
 
-        public void Link<TNode,TLinked>(string nodeId, string linkedId,Linkage linkage) 
+        public void Link<TNode,TLinked>(string linkedById, string linkerId,Linkage linkage) 
             where TNode:INode 
             where TLinked:INode
         {
             using (IGraph graph = (IGraph)_graphFactory.Create())
             {
-                graph.LinkWithParams<TNode, TLinked>(nodeId, linkedId, linkage, new LinkParams());
+                graph.LinkWithParams<TNode, TLinked>(linkedById, linkerId, linkage, new LinkParams());
             }
         }
         
-        public void UnLink<TNode, TLinked>(string nodeId, string linkedId, Linkage linkage) where TNode : INode where TLinked : INode
+        public void UnLink<TNode, TLinked>(string linkedById, string linkerId, Linkage linkage) where TNode : INode where TLinked : INode
         {
             using (IGraph graph = (IGraph)_graphFactory.Create())
             {
-                graph.UnLink<TNode, TLinked>(nodeId, linkedId, linkage);
+                graph.UnLink<TNode, TLinked>(linkedById, linkerId, linkage);
             }
         }
         
-        public bool IsLinked<TNode,TLinked>(string nodeId,string linkedId,Linkage linkage)
+        public bool IsLinker<TNode,TLinked>(string linkedById,string linkerId,Linkage linkage)
             where TNode : INode where TLinked : INode
         {
             using (IGraph graph = (IGraph)_graphFactory.Create())
             {
-                return graph.IsLinker<TNode, TLinked>(nodeId, linkedId, linkage);
+                return graph.IsLinkerOfLinkedBy<TNode, TLinked>(linkedById, linkerId, linkage);
             }
         }
 
-        public List<TLinker> GetLinkers<TNode,TLinker>(string nodeId, Linkage linkage) where TNode:INode where TLinker:INode
+        public List<TLinker> GetLinkers<TNode,TLinker>(string linkedById, Linkage linkage) where TNode:INode where TLinker:INode
         {
             using (IGraph graph = (IGraph)_graphFactory.Create())
             {
-                return graph.GetNodeLinkers<TNode, TLinker>(nodeId, linkage);
+                return graph.GetNodeLinkers<TNode, TLinker>(linkedById, linkage);
             }
         }
 
@@ -139,6 +139,26 @@ namespace Social.BL.Models
             }
         }
 
+        public List<TLinkedByLinkedBy> GetNodeLinkedByLinkedByWithLinkersCount<TLinkedByLinkedBy, TLinkedBy, TLinker>(
+            string linkerId,
+            Linkage linkageOfLinkedBy,
+            Linkage linkageOfLinkedByLinkedBy,
+            Linkage linkageOfLinkersCount)
+            where TLinkedByLinkedBy : INode
+            where TLinkedBy : INode
+            where TLinker : INode
+            
+
+        {
+
+            using (IGraph graph = (IGraph)_graphFactory.Create())
+            {
+                var results = graph.GetNodeLinkedByLinkedByResults<TLinkedByLinkedBy, TLinkedBy, TLinker>(linkerId, linkageOfLinkedBy, linkageOfLinkedByLinkedBy);
+
+                return graph.GetNodesWithLinkersCount<TLinkedByLinkedBy, TLinkedBy>(results, linkageOfLinkersCount, "linkedByLinkedBy");
+            }
+        }
+        
         public List<TLinker> GetNodeLinkedByNotLinks<TLinkedBy, TLinker>(string linkerId, Linkage linkage1, Linkage linkage2)
             where TLinker : MNode
             where TLinkedBy : MNode
@@ -153,13 +173,13 @@ namespace Social.BL.Models
         public void LinkProfiles(SocialAction socialAction,bool swch=true)
         {
             string linkerId = socialAction.FromId;
-            string linkedId = socialAction.ToId;
+            string linkedById = socialAction.ToId;
             Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage),socialAction.linkage);
                 if (swch)
-                 Link<Profile, Profile>(linkerId, linkedId, linkage);
+                 Link<Profile, Profile>(linkedById, linkerId, linkage);
             
             else
-                UnLink<Profile, Profile>(linkerId, linkedId, linkage);
+                UnLink<Profile, Profile>(linkedById, linkerId, linkage);
 
         }
 

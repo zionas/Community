@@ -1,4 +1,5 @@
-﻿using CommunityNetwork.Common.Inerfaces;
+﻿using CommunityNetwork.Common;
+using CommunityNetwork.Common.Inerfaces;
 using CommunityNetwork.Common.Models;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,12 @@ namespace Social.BL.Interfaces
     {
         TPublish Publish<TPublish>(string profileId, TPublish publish)
             where TPublish : IPost;
+
          Comment Comment<TCommentable>(string profileId, Comment comment, string commentableId)
             where TCommentable : IPost;
+
+        Profile GetPublisher<TPostable>(string commentableId)
+           where TPostable : IPost;
 
     }
 }

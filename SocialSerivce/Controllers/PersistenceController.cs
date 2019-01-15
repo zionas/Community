@@ -25,11 +25,18 @@ namespace SocialSerivce.Controllers
         [Route("CreateProfile")]
          public IHttpActionResult CreateProfile([FromBody]Profile profile)
         {
-            Profile p=repos.Add(profile);
-            if (p.Equals(profile))
-                return Ok(p);
-            else
-                return Content(HttpStatusCode.InternalServerError, false);
+            try
+            {
+                Profile p = repos.Add(profile);
+                if (p.Equals(profile))
+                    return Ok(p);
+                else
+                    throw new Exception(HttpStatusCode.InternalServerError.ToString());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet]
@@ -48,14 +55,6 @@ namespace SocialSerivce.Controllers
             
         }
 
-        // PUT: api/Persistence/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/Persistence/5
-        public void Delete(int id)
-        {
-        }
+        
     }
 }

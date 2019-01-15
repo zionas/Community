@@ -25,7 +25,8 @@ namespace Social.BL.Models
                 return graph.CreateAndLinkWithParams<TPublish,Profile>(profileId, publish, Linkage.Publish, new LinkParams());
             }
         }
-        /**********************************/
+        
+        
         public Comment Comment<TCommentable>(string profileId,Comment comment,string commentableId)
             where TCommentable:IPost
         {
@@ -34,6 +35,17 @@ namespace Social.BL.Models
             {
                  graph.Link<Comment,TCommentable>(commentableId, comment.Id,Linkage.Comment);
                 return comment;
+            }
+        }
+
+        public Profile GetPublisher<TPostable>(string commentableId)
+           where TPostable:IPost
+        {
+            
+            using (IGraph graph = (IGraph)_graphFactory.Create())
+            {
+                return graph.GetNodeLinkers<TPostable, Profile>(commentableId, Linkage.Publish)[0];
+                
             }
         }
 

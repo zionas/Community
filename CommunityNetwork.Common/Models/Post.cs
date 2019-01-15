@@ -13,15 +13,11 @@ namespace CommunityNetwork.Common.Models
         
         public VisibilityPermission VisibilityPermission { get; set; }
         public string ImageSourcePath { get; set; }
-        public List<string> Likers { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int Likes { get ; set ; }
 
         private string _content;
 
-        public int GetLikes()
-        {
-            /// neo4j return count of likes
-            return 0;
-        }
+        
 
         public List<Comment> GetComments()
         {
