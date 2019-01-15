@@ -11,6 +11,7 @@ using System.Web.Http;
 
 namespace SocialSerivce.Controllers
 {
+    [RoutePrefix("api/Publish")]
     public class PublishController : ApiController
     {
         private readonly IPublisher _publisher;
@@ -23,7 +24,9 @@ namespace SocialSerivce.Controllers
             return new string[] { "value1", "value2" };
         }
 
-       
+     
+
+
 
         [HttpPost]
         [Route("PublishPost")]
@@ -37,6 +40,8 @@ namespace SocialSerivce.Controllers
             else
                 return Content(HttpStatusCode.InternalServerError, false);
         }
+
+
         [HttpPost]
         [Route("Comment")]
         public IHttpActionResult Comment([FromBody]PublishAction publishAction)
@@ -48,16 +53,16 @@ namespace SocialSerivce.Controllers
             if (comment == default(Comment)
                || commentedId == default(string)
                || authorId == default(string))
-                    return BadRequest();
+                return BadRequest();
 
             Comment c = _publisher.Comment<Post>(authorId, comment, commentedId);
             if (c.Equals(comment))
                 return Ok(c);
             else
                 return ResponseMessage(new HttpResponseMessage(HttpStatusCode.ExpectationFailed));
-            
+
         }
 
-        
+
     }
 }

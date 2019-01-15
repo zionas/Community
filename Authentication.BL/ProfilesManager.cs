@@ -7,6 +7,7 @@ using CommunityNetWork.Dal.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,13 +28,13 @@ namespace Authentication.BL
             this._iDynamoDB = (IDynamoDB)dBFactory.Create(false);
         }
 
-        
+
         public Profile Login(string email, string password)
         {
             var profileConnected = _iDynamoDB.Get<Profile>(email, true);
             if (profileConnected?.Password == password)
             {
-                GenerateToken(profileConnected.Email);
+               // GenerateToken(profileConnected.Email);
             }
             else
             {
@@ -44,15 +45,16 @@ namespace Authentication.BL
 
         public bool CheckValidationToken(string email)
         {
-            var token = _iDynamoDB.Get<TokenModel>(email, true);
-            return CheckValidToken(token.TokenCreateTime);
+            return true;
+            //var token = _iDynamoDB.Get<TokenModel>(email, true);
+            //return CheckValidToken(token.TokenCreateTime);
         }
 
         private void GenerateToken(string email)
         {
             TokenModel tokenModel = new TokenModel()
             {
-                Token = Guid.NewGuid(),
+                Token = Guid.NewGuid().ToString(),
                 TokenCreateTime = DateTime.Now,
                 Email = email
             };
@@ -68,6 +70,13 @@ namespace Authentication.BL
         public Profile Register(Profile profile)
         {
             _iDynamoDB.Add(profile);
+            using (var httpClient = new HttpClient())
+            {
+                var content = httpClient.PostAsJsonAsync("http://localhost:52225/api/Persistence/CreateProfile", profile).Result;
+                if (!content.IsSuccessStatusCode)
+                    throw new Exception("Can't register this user");
+            }
+
             return profile;
         }
 
@@ -76,8 +85,8 @@ namespace Authentication.BL
             Profile profileConnected = null;
             try
             {
-                 profileConnected = _iDynamoDB.Get<Profile>(profile.Email, true);
-                if (profileConnected!=null)
+                profileConnected = _iDynamoDB.Get<Profile>(profile.Email, true);
+                if (profileConnected != null)
                 {
                     GenerateToken(profileConnected.Email);
                 }
@@ -89,6 +98,6 @@ namespace Authentication.BL
             return profileConnected;
         }
 
-       
+
     }
 }

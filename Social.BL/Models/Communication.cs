@@ -29,7 +29,7 @@ namespace Social.BL.Models
         {
             using (IGraph graph = (IGraph)_graphFactory.Create())
             {
-                graph.LinkWithParams<TNode, TLinked>(nodeId, linkedId, linkage, new LinkParams());
+                graph.Link<TNode, TLinked>(nodeId, linkedId, linkage);
             }
         }
         
@@ -139,6 +139,15 @@ namespace Social.BL.Models
             }
         }
 
+        public bool Publish<TPublish>(string profileId, TPublish publish)
+        where TPublish : IPost
+        {
+            using (IGraph graph = (IGraph)_graphFactory.Create())
+            {
+                return graph.Link<TPublish, Profile>(profileId, publish.Id, Linkage.Publish);
+            }
+        }
+
         public List<TLinker> GetNodeLinkedByNotLinks<TLinkedBy, TLinker>(string linkerId, Linkage linkage1, Linkage linkage2)
             where TLinker : MNode
             where TLinkedBy : MNode
@@ -156,17 +165,30 @@ namespace Social.BL.Models
             string linkedId = socialAction.ToId;
             Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage),socialAction.linkage);
                 if (swch)
-                 Link<Profile, Profile>(linkerId, linkedId, linkage);
+                 Link<Profile, Profile>(linkedId, linkerId, linkage);
             
             else
                 UnLink<Profile, Profile>(linkerId, linkedId, linkage);
 
         }
 
+        public void LinkProfileToPost(SocialAction socialAction, bool swch = true)
+        {
+            string linkerId = socialAction.FromId;
+            string linkedId = socialAction.ToId;
+            Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
+            if (swch)
+                Link<Post, Profile>(linkedId, linkerId, linkage);
 
-        
-       
-        
+            else
+                UnLink<Post, Profile>(linkerId, linkedId, linkage);
+
+        }
+
+
+
+
+
         public void Like<TLikeable>(string likerId,
                                     string likeableId,
                                     bool swch=true)
@@ -185,6 +207,5 @@ namespace Social.BL.Models
             UnLink<Profile, TLikeable>(likerId, likeableId, Linkage.Like);
         }
 
-        
     }
 }

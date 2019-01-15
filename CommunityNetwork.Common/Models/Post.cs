@@ -13,9 +13,12 @@ namespace CommunityNetwork.Common.Models
         
         public VisibilityPermission VisibilityPermission { get; set; }
         public string ImageSourcePath { get; set; }
-        public List<string> Likers { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public List<string> Likers { get; set; }
+        public string Content { get; set; }
+        public string PublisherId { get; set; }
+        public string Publisher { get; set; }
 
-        private string _content;
+        //private string _content;
 
         public int GetLikes()
         {
@@ -41,7 +44,7 @@ namespace CommunityNetwork.Common.Models
 
         public void EditPost(string content)
         {
-            _content = content;
+            //_content = content;
         }
         
 
@@ -60,9 +63,9 @@ namespace CommunityNetwork.Common.Models
             throw new NotImplementedException();
         }
 
-        public Post(string content)
+        public Post()
         {
-            this._content = content;
+            //this._content = content;
         }
 
 
