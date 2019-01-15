@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CommunityNetwork.Common;
 using CommunityNetwork.Common.Models;
 using CommunityNetWork.Common.Enums;
 using CommunityNetWork.Dal;
@@ -13,6 +14,7 @@ namespace Neo4J.Test
     {
         public int IntProperty { get; set; }
         public string StringProperty { get; set; }
+        public int Likes { get; set; }
         public override bool Equals(object obj)
         {
             if (!(obj is NodeA))
@@ -29,9 +31,21 @@ namespace Neo4J.Test
     public class Neo4JConnectorApi
     {
         NodeA nA1,nA2,nA3,nA4;
+        Profile p1, p2;
         public void Init()
         {
-            nA1= new NodeA
+            p1 = new Profile
+            {
+                UserName = "p1",
+
+            };
+            p2 = new Profile
+            {
+                UserName = "p2",
+
+            };
+
+            nA1 = new NodeA
             {
                 Id = Guid.NewGuid().ToString(),
                 IntProperty = 1,
@@ -110,7 +124,29 @@ namespace Neo4J.Test
             bool result = nodes.Contains(nA1)&&empty.Count==0;
             Assert.AreEqual(result, true);
         }
-
+        [TestMethod]
+        public void TestDeleteAllNodes()
+        {
+            NodeA node;
+            Profile p;
+           
+            bool createNodeA,createP, deleteAll;
+            Init();
+            using (Neo4jConnector neo4j = new Neo4jConnector())
+            {
+                node = neo4j.Create(nA1);
+                p = neo4j.Create(p1);
+                
+                createNodeA = neo4j.Get<NodeA>().Count>0;
+                createP= neo4j.Get<Profile>().Count > 0;
+                neo4j.DeleteAll();
+                deleteAll = neo4j.Get<NodeA>().Count == 0
+                    && neo4j.Get<Profile>().Count == 0;
+            
+            }
+            bool result = createNodeA&& createP&&deleteAll; ;
+            Assert.AreEqual(result, true);
+        }
         [TestMethod]
         public void TestGetNodeByItsId()
         {
@@ -153,7 +189,7 @@ namespace Neo4J.Test
                 neo4j.Create(nA1);
                 neo4j.Create(nA2);
                 neo4j.Link<NodeA, NodeA>(nA1.Id, nA2.Id, Linkage.Follow);
-                result = neo4j.IsLinker<NodeA, NodeA>(nA1.Id, nA2.Id, Linkage.Follow);
+                result = neo4j.IsLinkerOfLinkedBy<NodeA, NodeA>(nA1.Id, nA2.Id, Linkage.Follow);
                 
             }
             
@@ -179,6 +215,50 @@ namespace Neo4J.Test
         }
 
         [TestMethod]
+        public void TestGetNodesWithLikersCount()
+        {
+            List<NodeA> list;
+            Init();
+            using (Neo4jConnector neo4j = new Neo4jConnector())
+            {
+                neo4j.Create(nA1);
+                neo4j.Create(nA2);
+                neo4j.Create(nA3);
+                Linkage linkage = Linkage.Like;
+                neo4j.Link<NodeA, NodeA>(nA1.Id, nA2.Id, linkage);
+                neo4j.Link<NodeA, NodeA>(nA1.Id, nA3.Id, linkage);
+                var results = neo4j.GetNodeLinkedByResults<NodeA, NodeA>(nA2.Id, Linkage.Like);
+                list = neo4j.GetNodesWithLinkersCount<NodeA,NodeA>(results, linkage, "linkedBy");
+            }
+            bool result = list.Contains(nA1) && list[0].Likes==2;
+            Assert.AreEqual(result, true);
+        }
+
+        [TestMethod]
+        public void TestGetFollowedFollowdNodesWithLikersCount()
+        {
+            List<NodeA> list;
+            Init();
+            using (Neo4jConnector neo4j = new Neo4jConnector())
+            {
+                NodeA post = nA1,author=nA2,follower=nA3;
+                neo4j.Create(nA1);
+                neo4j.Create(nA2);
+                neo4j.Create(nA3);
+                Linkage like = Linkage.Like;
+                Linkage follow = Linkage.Follow;
+                Linkage publish = Linkage.Publish;
+                neo4j.Link<NodeA, NodeA>(post.Id, nA2.Id, publish);
+                neo4j.Link<NodeA, NodeA>(author.Id, follower.Id, follow);
+                neo4j.Link<NodeA, NodeA>(post.Id, follower.Id, like);
+                neo4j.Link<NodeA, NodeA>(post.Id, author.Id, like);
+                var results = neo4j.GetNodeLinkedByLinkedByResults<NodeA, NodeA,NodeA>(follower.Id, follow,publish);
+                list = neo4j.GetNodesWithLinkersCount<NodeA, NodeA>(results, like, "linkedByLinkedBy");
+            }
+            bool result = list.Contains(nA1) && list[0].Likes == 2;
+            Assert.AreEqual(result, true);
+        }
+        [TestMethod]
         public void TestGetNodeLinkers()
         {
             List<NodeA> list;
@@ -188,6 +268,9 @@ namespace Neo4J.Test
                 neo4j.Create(nA1);
                 neo4j.Create(nA2);
                 neo4j.Create(nA3);
+                neo4j.Create(p1);
+                neo4j.Create(p2);
+                neo4j.Link<Profile,Profile>(p1.Id, p2.Id, Linkage.Follow);
                 neo4j.Link<NodeA, NodeA>(nA1.Id, nA2.Id, Linkage.Follow);
                 neo4j.Link<NodeA, NodeA>(nA1.Id, nA3.Id, Linkage.Follow);
                 list = neo4j.GetNodeLinkers<NodeA, NodeA>(nA1.Id, Linkage.Follow);
@@ -195,6 +278,28 @@ namespace Neo4J.Test
             bool result = list.Contains(nA2) && list.Contains(nA3);
             Assert.AreEqual(result, true);
         }
+
+        [TestMethod]
+        public void TestGetProfileLinkers()
+        {
+            List<Profile> list;
+            Init();
+            using (Neo4jConnector neo4j = new Neo4jConnector())
+            {
+
+                neo4j.Delete<Profile>();
+                neo4j.Create(p1);
+                neo4j.Create(p2);
+                neo4j.Link<Profile, Profile>(p1.Id, p2.Id, Linkage.Follow);
+                
+                list = neo4j.GetNodeLinkers<Profile,Profile>(p1.Id, Linkage.Follow);
+            }
+            bool result = list.Contains(p2);
+            Assert.AreEqual(result, true);
+        }
+
+        
+
         [TestMethod]
         public void TestGetNodeNotLinks()
         {

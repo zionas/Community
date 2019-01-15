@@ -10,12 +10,11 @@ namespace Social.BL.Interfaces
 {
     public interface IRepository
     {
+        string GetTypeName(string id);
         TNode Get<TNode>(string id) where TNode : MNode;
         List<TNode> Get<TNode>(string propertyName, object value) where TNode : MNode;
 
-        List<TLinker> GetNodeLinkers<TLinkedBy, TLinker>(string linkedById, Linkage linkage)
-            where TLinker : MNode
-            where TLinkedBy : MNode;
+        
 
         TNode Add<TNode>(TNode node) where TNode : MNode;
 

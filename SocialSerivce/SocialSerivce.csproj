@@ -139,7 +139,6 @@
     <Compile Include="Controllers\PersistenceController.cs" />
     <Compile Include="Controllers\PublishController.cs" />
     <Compile Include="Controllers\SocialActionsController.cs" />
-    <Compile Include="Controllers\TokenedApiController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -159,6 +158,10 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Authentication.BL\Authentication.BL.csproj">
+      <Project>{ffeedc6c-de8a-4989-a99a-9978cce67b7f}</Project>
+      <Name>Authentication.BL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CommunityNetwork.Common\CommunityNetwork.Common.csproj">
       <Project>{301e0f01-b128-4b06-b56c-a9792e9d57c2}</Project>
       <Name>CommunityNetwork.Common</Name>

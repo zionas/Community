@@ -18,7 +18,7 @@ namespace Social.BL.Interfaces
 
         void UnLink<TNode, TLinked>(string nodeId, string linkedId, Linkage linkage) where TNode : INode where TLinked : INode;
 
-        bool IsLinked<TNode, TLinked>(string nodeId, string linkedId, Linkage linkage)
+        bool IsLinker<TNode, TLinked>(string nodeId, string linkedId, Linkage linkage)
            where TNode : INode where TLinked : INode;
 
        List<TLinked>  GetLinkers<TNode, TLinked>(string nodeId, Linkage linkage) where TNode : INode where TLinked : INode;
@@ -36,6 +36,16 @@ namespace Social.BL.Interfaces
             where TLinked : INode;
 
 
+        List<TLinkedByLinkedBy> GetNodeLinkedByLinkedByWithLinkersCount<TLinkedByLinkedBy, TLinkedBy, TLinker>(
+            string linkerId,
+            Linkage linkageOfLinkedBy,
+            Linkage linkageOfLinkedByLinkedBy,
+            Linkage linkageOfLinkersCount)
+            where TLinkedByLinkedBy : INode
+            where TLinkedBy : INode
+            where TLinker : INode;
+
+            
         List<Tuple<TLinkedBy, TLinkedByLinkedBy>> GetNewLinkedByLinkers<TNode, TLinkedBy, TLinkedByLinkedBy>(string nodeId, Linkage linkage, Linkage linkageBy, DateTime dateTime)
             where TNode : INode where TLinkedBy : INode where TLinkedByLinkedBy : INode;
 

@@ -53,12 +53,13 @@ namespace AuthenticationService.Controllers
 
         [HttpGet]
         [Route("CheckValidToken")]
-        public IHttpActionResult CheckValidToken(string email)
+        public IHttpActionResult CheckValidToken(string[] emailToken)
         {
             try
             {
-                bool isValidToken = _profileService.CheckValidationToken(email);
-                return Ok(isValidToken);
+                if (_profileService.CheckValidationToken(emailToken[0], emailToken[1]))
+                    return Ok();
+                else return BadRequest();
             }
             catch (Exception ex)
             {

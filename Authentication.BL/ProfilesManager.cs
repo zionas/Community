@@ -42,10 +42,13 @@ namespace Authentication.BL
             return profileConnected;
         }
 
-        public bool CheckValidationToken(string email)
+        public bool CheckValidationToken(string email,string token)
         {
-            var token = _iDynamoDB.Get<TokenModel>(email, true);
-            return CheckValidToken(token.TokenCreateTime);
+            var tokenModel = _iDynamoDB.Get<TokenModel>(token, true);
+            
+            return tokenModel!=null
+                &&tokenModel.Email== email
+                && CheckValidToken(tokenModel.TokenCreateTime);
         }
 
         private void GenerateToken(string email)

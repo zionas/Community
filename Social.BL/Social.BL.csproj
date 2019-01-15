@@ -56,8 +56,9 @@
     <Compile Include="Interfaces\ICommunication.cs" />
     <Compile Include="Interfaces\IPublisher.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
-    <Compile Include="LinkageAnalyzer.cs" />
+    <Compile Include="Models\Config.cs" />
     <Compile Include="Models\Communication.cs" />
+    <Compile Include="Models\Mention.cs" />
     <Compile Include="Models\PublishAction.cs" />
     <Compile Include="Models\Publisher.cs" />
     <Compile Include="Models\PublishAnalyzer.cs" />

@@ -5,12 +5,14 @@ using Social.BL.Models;
 using System;
 using System.Web.Http;
 using CommunityNetwork.Common;
+using Authentication.BL;
 
 namespace SocialSerivce.Controllers
 {
     [RoutePrefix("api/SocialActions")]
-   
-    public class SocialActionsController : TokenedApiController
+    [AuthorizeValidator ]
+    [Authorize]
+    public class SocialActionsController : ApiController
     {
         ICommunication _com;
         IRepository _repos;
@@ -20,21 +22,6 @@ namespace SocialSerivce.Controllers
             _repos = repos;
         }
          
-        // GET: api/SocialActions
-        public IHttpActionResult Get()
-        {
-
-            if (!IsAuthorized())
-                
-                return BadRequest("not authorized");
-            return Ok(new string[] { "value1","value2" });
-        }
-
-        // GET: api/SocialActions/5
-        public string Get(int id)
-        {
-            return "value";
-        }
         
         
         [HttpPost]
@@ -44,8 +31,8 @@ namespace SocialSerivce.Controllers
             string fromId = socialAction.FromId;
             string toId = socialAction.ToId;
             Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
-            bool linked = socialAction.Switcher;
-            if (linked)
+            bool toLink = socialAction.Switcher;
+            if (toLink)
                 _com.LinkProfiles(socialAction);
             else
                 _com.LinkProfiles(socialAction, false);
@@ -53,8 +40,6 @@ namespace SocialSerivce.Controllers
 
 
         }
-
-        
 
         [HttpPost]
         [Route("IsSocialLinked")]
@@ -70,16 +55,12 @@ namespace SocialSerivce.Controllers
                     return Ok(false);
                 case Linkage.Block:
                 case Linkage.Follow:
-                    bool linked = _com.IsLinked<Profile, Profile>(fromId, toId, linkage);
-                    return Ok(linked);
+                    bool linker = _com.IsLinker<Profile, Profile>(toId, fromId, linkage);
+                    return Ok(linker);
             }
            
 
         }
-
-        
-
-
 
         [HttpPost]
         [Route("GetNotBlocked")]
@@ -91,14 +72,6 @@ namespace SocialSerivce.Controllers
 
 
         }
-        // PUT: api/SocialActions/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/SocialActions/5
-        public void Delete(int id)
-        {
-        }
+       
     }
 }

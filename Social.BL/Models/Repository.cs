@@ -19,12 +19,21 @@ namespace Social.BL.Models
         {
             _graphFactory = graphFactory;
         }
-        
+
         public TNode Get<TNode>(string id) where TNode : MNode
         {
             using (IGraph praph = (IGraph)_graphFactory.Create())
             {
                 return praph.Get<TNode>(id);
+
+            }
+        }
+
+        public string GetTypeName(string id) 
+        {
+            using (IGraph graph = (IGraph)_graphFactory.Create())
+            {
+                return graph.GetTypeName(id);
 
             }
         }
