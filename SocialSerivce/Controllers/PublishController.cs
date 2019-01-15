@@ -9,6 +9,7 @@ using System.Web.Http;
 
 namespace SocialSerivce.Controllers
 {
+    [RoutePrefix("api/Publish")]
     public class PublishController : ApiController
     {
         private readonly IPublisher _publisher;
@@ -16,8 +17,7 @@ namespace SocialSerivce.Controllers
         {
             _publisher = publisher;
         }
-        
-       
+
 
         [HttpPost]
         [Route("PublishPost")]
@@ -35,7 +35,7 @@ namespace SocialSerivce.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
+
         [HttpPost]
         [Route("Comment")]
         public IHttpActionResult Comment([FromBody]PublishAction publishAction)
@@ -45,6 +45,7 @@ namespace SocialSerivce.Controllers
                 Comment comment = (Comment)publishAction.Publish;
                 string commentedId = publishAction.CommentedId;
                 string authorId = publishAction.AuthorId;
+
 
                 if (comment == default(Comment)
                    || commentedId == default(string)
@@ -64,6 +65,6 @@ namespace SocialSerivce.Controllers
 
         }
 
-        
+
     }
 }

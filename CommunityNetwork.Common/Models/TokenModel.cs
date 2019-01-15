@@ -9,11 +9,12 @@ namespace CommunityNetwork.Common.Models
 {
     public class TokenModel
     {
+        
         [DynamoDBHashKey]
-        public string Email { get; set; }
+        public string Token { get; set; }
 
-        public Guid Token { get; set; }
         public DateTime TokenCreateTime { get; set; }
+        public string Email { get; set; }
 
         public bool CheckTokenValid(DateTime tokenCreateTime)
         {

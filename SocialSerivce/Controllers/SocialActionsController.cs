@@ -5,25 +5,96 @@ using Social.BL.Models;
 using System;
 using System.Web.Http;
 using CommunityNetwork.Common;
+using CommunityNetwork.Common.Models;
+using System.IO;
+using System.Web;
+using Amazon.S3;
+using Amazon;
+using Amazon.S3.Transfer;
+using Social.BL;
+
 using Authentication.BL;
 
 namespace SocialSerivce.Controllers
 {
     [RoutePrefix("api/SocialActions")]
-    [AuthorizeValidator ]
-    [Authorize]
     public class SocialActionsController : ApiController
     {
         ICommunication _com;
         IRepository _repos;
-        public SocialActionsController(ICommunication com,IRepository repos)
+
+        public SocialActionsController(ICommunication com, IRepository repos)
         {
             _com = com;
             _repos = repos;
         }
-         
-        
-        
+
+
+
+        [HttpPost]
+        [Route("CreatePost")]
+        public IHttpActionResult CreatePost([FromBody]Post post)
+        {
+            try
+            {
+                _repos.Add(post);
+                SocialAction socialAction = new SocialAction()
+                {
+                    FromId = post.PublisherId,
+                    ToId = post.Id,
+                    linkage = Linkage.Publish.ToString(),
+                    Switcher = true
+                };
+                _com.LinkProfileToPost(socialAction);
+                return Ok();
+
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+        }
+        [HttpPost]
+        [Route("Upload")]
+        public IHttpActionResult Upload([FromBody]string file)
+        {
+            try
+            {
+                AmazonS3Uploader amazonS3Uploader = new AmazonS3Uploader();
+                string res =amazonS3Uploader.UploadFile(file);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("BlockUser")]
+        public IHttpActionResult BlockUser([FromBody]SocialAction socialAction)
+        {
+            try
+            {
+                string fromId = socialAction.FromId;
+                string toId = socialAction.ToId;
+                Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
+                bool linked = socialAction.Switcher;
+                bool flag = _com.IsLinked<Profile, Profile>(fromId, toId, linkage);
+                if(flag)
+                    _com.UnLink<Profile, Profile>(fromId, toId, Linkage.Follow);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+        }
+
+
         [HttpPost]
         [Route("SWLinkProfiles")]
         public IHttpActionResult SWLinkProfiles([FromBody]SocialAction socialAction)
@@ -36,10 +107,11 @@ namespace SocialSerivce.Controllers
                 _com.LinkProfiles(socialAction);
             else
                 _com.LinkProfiles(socialAction, false);
-            return Ok(linkage+"s");
+            return Ok(linkage + "s");
 
 
         }
+
 
         [HttpPost]
         [Route("IsSocialLinked")]
@@ -58,16 +130,17 @@ namespace SocialSerivce.Controllers
                     bool linker = _com.IsLinker<Profile, Profile>(toId, fromId, linkage);
                     return Ok(linker);
             }
-           
+
 
         }
+
 
         [HttpPost]
         [Route("GetNotBlocked")]
         public IHttpActionResult GetNotBlocked([FromBody]string blockerId)
         {
-           
-            var notLinked= _com.GetNotLinked<Profile, Profile>(blockerId,Linkage.Block);
+
+            var notLinked = _com.GetNotLinked<Profile, Profile>(blockerId, Linkage.Block);
             return Ok(notLinked);
 
 

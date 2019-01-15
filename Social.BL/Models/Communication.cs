@@ -29,7 +29,9 @@ namespace Social.BL.Models
         {
             using (IGraph graph = (IGraph)_graphFactory.Create())
             {
+
                 graph.LinkWithParams<TNode, TLinked>(linkedById, linkerId, linkage, new LinkParams());
+
             }
         }
         
@@ -139,6 +141,15 @@ namespace Social.BL.Models
             }
         }
 
+        public bool Publish<TPublish>(string profileId, TPublish publish)
+        where TPublish : IPost
+        {
+            using (IGraph graph = (IGraph)_graphFactory.Create())
+            {
+                return graph.Link<TPublish, Profile>(profileId, publish.Id, Linkage.Publish);
+            }
+        }
+
         public List<TLinkedByLinkedBy> GetNodeLinkedByLinkedByWithLinkersCount<TLinkedByLinkedBy, TLinkedBy, TLinker>(
             string linkerId,
             Linkage linkageOfLinkedBy,
@@ -176,6 +187,7 @@ namespace Social.BL.Models
             string linkedById = socialAction.ToId;
             Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage),socialAction.linkage);
                 if (swch)
+
                  Link<Profile, Profile>(linkedById, linkerId, linkage);
             
             else
@@ -183,10 +195,23 @@ namespace Social.BL.Models
 
         }
 
+        public void LinkProfileToPost(SocialAction socialAction, bool swch = true)
+        {
+            string linkerId = socialAction.FromId;
+            string linkedId = socialAction.ToId;
+            Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
+            if (swch)
+                Link<Post, Profile>(linkedId, linkerId, linkage);
 
-        
-       
-        
+            else
+                UnLink<Post, Profile>(linkerId, linkedId, linkage);
+
+        }
+
+
+
+
+
         public void Like<TLikeable>(string likerId,
                                     string likeableId,
                                     bool swch=true)
@@ -205,6 +230,5 @@ namespace Social.BL.Models
             UnLink<Profile, TLikeable>(likerId, likeableId, Linkage.Like);
         }
 
-        
     }
 }
