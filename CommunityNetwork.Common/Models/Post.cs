@@ -17,14 +17,12 @@ namespace CommunityNetwork.Common.Models
         public string Content { get; set; }
         public string PublisherId { get; set; }
         public string Publisher { get; set; }
+        public int Likes { get ; set ; }
+
 
         //private string _content;
 
-        public int GetLikes()
-        {
-            /// neo4j return count of likes
-            return 0;
-        }
+        
 
         public List<Comment> GetComments()
         {

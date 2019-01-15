@@ -6,7 +6,7 @@ namespace CommunityNetwork.Common.Models
 {
     public class Notification
     {
-        public string NotifiedUserName { get; set; }
+        public string NotifiedUserId { get; set; }
         public DateTime Time { get; set; }
         public NotificationType NotificationType { get; set; }
 

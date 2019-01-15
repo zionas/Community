@@ -8,7 +8,7 @@ namespace CommunityNetwork.Common.Models
     {
         public string Content { get; set; }
         public DateTime CommentTime { get; set; }
-        public List<string> Likers { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int Likes { get; set ; }
 
         public void Save()
         {

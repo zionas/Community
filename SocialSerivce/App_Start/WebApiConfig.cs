@@ -38,7 +38,7 @@ namespace SocialSerivce
             var container = new Container();
             container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
-            container.Register<IGraphFactory>(() => new Neo4JConnectorFactory());
+            container.Register<IGraphFactory>(() => new CommunityNetWork.Dal.Neo4JConnectorFactory());
             container.Register<IDynamoDBFactory>(() => new AwsDynamoDBFactory());
             container.Register<ICommunication>(() => new Communication(container.GetInstance< IGraphFactory>()));
             container.Register<IRepository>(() => new Repository(container.GetInstance<IGraphFactory>()));

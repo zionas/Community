@@ -10,21 +10,29 @@ namespace CommunityNetWork.Dal.Interfaces
 {
     public interface IGraph: IDBConnector
     {
+        string GetTypeName(string id);
+
         List<TNode> Get<TNode>(string propertyName, object value) where TNode : INode;
 
        TNode Get<TNode>(string id) where TNode : INode;
+
         List<TNode> Get<TNode>() where TNode : INode;
+
         TNode Create<TNode>(TNode node) where TNode : INode;
+
         TNode Put<TNode>(TNode node) where TNode : INode;
+        bool DeleteAll();
+        bool Delete<TNode>() where TNode : INode;
         bool Delete<TNode>(string id) where TNode : INode;
 
         TNew CreateAndLink<TNew, TLinked>(string linkedId, TNew newNode, Linkage linkage)
             where TNew : INode
             where TLinked : INode;
+
         TNew CreateAndLinkWithParams<TNew, TLinked>(string linkedId, TNew newNode, Linkage linkage, LinkParams linkParams)
             where TNew : INode
             where TLinked : INode;
-        bool IsLinker<TLinker, TLinkedBy>(string linkedById, string linkerId, Linkage linkage)
+        bool IsLinkerOfLinkedBy<TLinker, TLinkedBy>(string linkedById, string linkerId, Linkage linkage)
             where TLinker : INode where TLinkedBy : INode;
 
         bool IsLinkedBy<TNode, TLinkedBy>(string linkedById, string linkerId, Linkage linkage)
@@ -83,8 +91,20 @@ namespace CommunityNetWork.Dal.Interfaces
         List<MNode> GetNodeLinkedByNotLinkedBy<TNode, TLinkedBy, TLinkedByLinkedBy>(string nodeId, Linkage linkage, Linkage linkageBy)
             where TNode : INode where TLinkedBy : INode where TLinkedByLinkedBy : INode;
 
+        ICypherFluentQuery GetNodeLinkedByLinkedByResults<TLinker, TLinkedBy, TLinkedByLinkedBy>(
+            string linkerId,
+            Linkage linkage,
+            Linkage linkageBy)
+            where TLinker : INode
+            where TLinkedBy : INode
+            where TLinkedByLinkedBy : INode;
 
-        List<Tuple<TLinkedBy, TLinkedByLinkedBy>> GetNodeNewLinkedByLinkedBy<TNode, TLinkedBy, TLinkedByLinkedBy>(string nodeId, Linkage linkage, Linkage linkageBy, DateTime dateTime) where TNode : INode where TLinkedBy : INode where TLinkedByLinkedBy : INode;
+        List<TLinkedBy> GetNodesWithLinkersCount<TLinkedBy, TLinker>(ICypherFluentQuery results, Linkage linkage, string tag)
+           where TLinkedBy : INode
+           where TLinker : INode;
+
+
+       List<Tuple<TLinkedBy, TLinkedByLinkedBy>> GetNodeNewLinkedByLinkedBy<TNode, TLinkedBy, TLinkedByLinkedBy>(string nodeId, Linkage linkage, Linkage linkageBy, DateTime dateTime) where TNode : INode where TLinkedBy : INode where TLinkedByLinkedBy : INode;
 
                
 

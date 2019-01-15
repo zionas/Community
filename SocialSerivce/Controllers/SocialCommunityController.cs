@@ -3,10 +3,6 @@ using CommunityNetwork.Common.Models;
 using CommunityNetWork.Common.Enums;
 using Social.BL.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 
 namespace SocialSerivce.Controllers
@@ -61,23 +57,36 @@ namespace SocialSerivce.Controllers
 
         [HttpPost]
         [Route("GetFollowed")]
-        public IHttpActionResult GetFollowed([FromBody]string blockerId)
+        public IHttpActionResult GetFollowed([FromBody]string followerId)
         {
 
-            var followers = _com.GetLinkedBy<Profile, Profile>(blockerId, Linkage.Block);
+            try
+            {
+                var followers = _com.GetLinkedBy<Profile, Profile>(followerId, Linkage.Block);
 
-            return Ok(followers);
+                return Ok(followers);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
         }
 
         [HttpPost]
         [Route("GetPostsByFollowed")]
-        public IHttpActionResult GetPostsByFollowed([FromBody]string blockerId)
+        public IHttpActionResult GetPostsByFollowed([FromBody]string followerId)
         {
 
-            var followers = _com.GetLinkedByLinkedBy<Profile, Profile, Post>(blockerId, Linkage.Follow, Linkage.Publish);
-
-            return Ok(followers);
+            try
+            {
+                var followers = _com.GetNodeLinkedByLinkedByWithLinkersCount<Post, Profile, Profile>(followerId, Linkage.Follow, Linkage.Publish, Linkage.Like);
+                return Ok(followers);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
 
         }

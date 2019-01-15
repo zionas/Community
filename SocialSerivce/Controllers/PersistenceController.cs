@@ -41,6 +41,7 @@ namespace SocialSerivce.Controllers
                 return BadRequest("Error occured," + ex.Message);
             }
 
+
         }
 
         [HttpGet]
@@ -59,14 +60,6 @@ namespace SocialSerivce.Controllers
 
         }
 
-        // PUT: api/Persistence/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE: api/Persistence/5
-        public void Delete(int id)
-        {
-        }
+        
     }
 }

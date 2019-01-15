@@ -9,7 +9,7 @@ namespace CommunityNetwork.Common.Inerfaces
     public interface IProfileService
     {
         Profile Login(string email, string password);
-        bool CheckValidationToken(string email);
+        bool CheckValidationToken(string email,string token);
         Profile Register(Profile profile);
         Profile LoginWithFaceBook(Profile profile);
     }

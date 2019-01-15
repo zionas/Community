@@ -3,8 +3,6 @@ using CommunityNetwork.Common.Models;
 using Social.BL.Interfaces;
 using Social.BL.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -19,47 +17,51 @@ namespace SocialSerivce.Controllers
         {
             _publisher = publisher;
         }
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-     
-
 
 
         [HttpPost]
         [Route("PublishPost")]
         public IHttpActionResult PublishPost([FromBody]PublishAction publishAction)
         {
-            Post post = (Post)publishAction.Publish;
-            string authorId = publishAction.AuthorId;
-            Post p = _publisher.Publish(authorId, post);
-            if (p.Equals(post))
+            try
+            {
+                Post post = (Post)publishAction.Publish;
+                string authorId = publishAction.AuthorId;
+                Post p = _publisher.Publish(authorId, post);
                 return Ok(p);
-            else
-                return Content(HttpStatusCode.InternalServerError, false);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
-
 
         [HttpPost]
         [Route("Comment")]
         public IHttpActionResult Comment([FromBody]PublishAction publishAction)
         {
-            Comment comment = (Comment)publishAction.Publish;
-            string commentedId = publishAction.CommentedId;
-            string authorId = publishAction.AuthorId;
+            try
+            {
+                Comment comment = (Comment)publishAction.Publish;
+                string commentedId = publishAction.CommentedId;
+                string authorId = publishAction.AuthorId;
 
-            if (comment == default(Comment)
-               || commentedId == default(string)
-               || authorId == default(string))
-                return BadRequest();
 
-            Comment c = _publisher.Comment<Post>(authorId, comment, commentedId);
-            if (c.Equals(comment))
-                return Ok(c);
-            else
-                return ResponseMessage(new HttpResponseMessage(HttpStatusCode.ExpectationFailed));
+                if (comment == default(Comment)
+                   || commentedId == default(string)
+                   || authorId == default(string))
+                    return BadRequest();
+
+                Comment c = _publisher.Comment<Post>(authorId, comment, commentedId);
+                if (c.Equals(comment))
+                    return Ok(c);
+                else
+                    return ResponseMessage(new HttpResponseMessage(HttpStatusCode.ExpectationFailed));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
         }
 
