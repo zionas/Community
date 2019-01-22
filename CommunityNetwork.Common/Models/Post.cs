@@ -16,8 +16,16 @@ namespace CommunityNetwork.Common.Models
         public int Likes { get ; set ; }
         public List<Profile> Likers { get; set; }
         public string Content { get; set; }
+        public string PublisherId { get; set; }
+        public string Publisher { get; set; }
+        public int Likes { get ; set ; }
+        public bool IsLiked { get; set; }
+        public string TagUserID { get; set; }
 
-        
+
+        //private string _content;
+
+
 
         public List<Comment> GetComments()
         {

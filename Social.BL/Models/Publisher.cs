@@ -33,7 +33,7 @@ namespace Social.BL.Models
             Publish(profileId, comment);
             using (IGraph graph = (IGraph)_graphFactory.Create())
             {
-                 graph.Link<Comment,TCommentable>(commentableId, comment.Id,Linkage.Comment);
+                 graph.Link<TCommentable, Comment>(commentableId, comment.Id,Linkage.Comment);
                 return comment;
             }
         }

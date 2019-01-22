@@ -3,6 +3,7 @@ using CommunityNetwork.Common.Models;
 using CommunityNetWork.Common.Enums;
 using Social.BL.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Web.Http;
 
 namespace SocialSerivce.Controllers
@@ -43,7 +44,7 @@ namespace SocialSerivce.Controllers
         {
             try
             {
-                var blockedUsers = _com.GetNodeLinkers<Profile, Profile>(userId, Linkage.Block);
+                var blockedUsers = _com.GetLinkedBy<Profile, Profile>(userId, Linkage.Block);
                 return Ok(blockedUsers);
 
             }
@@ -55,14 +56,14 @@ namespace SocialSerivce.Controllers
 
         }
 
-        [HttpPost]
-        [Route("GetFollowed")]
-        public IHttpActionResult GetFollowed([FromBody]string followerId)
+        [HttpGet]
+        [Route("GetFollowings")]
+        public IHttpActionResult GetFollowings(string userId)
         {
 
             try
             {
-                var followers = _com.GetNodeLinkedBy<Profile, Profile>(followerId, Linkage.Block);
+                var followers = _com.GetLinkedBy<Profile, Profile>(userId, Linkage.Follow);
 
                 return Ok(followers);
             }
@@ -73,15 +74,23 @@ namespace SocialSerivce.Controllers
 
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("GetPostsByFollowed")]
-        public IHttpActionResult GetPostsByFollowed([FromBody]string followerId)
+        public IHttpActionResult GetPostsByFollowed(string followerId)
         {
 
             try
             {
-                var followers = _com.GetNodeLinkedByLinkedByWithLinkersCount<Post, Profile, Profile>(followerId, Linkage.Follow, Linkage.Publish, Linkage.Like);
-                return Ok(followers);
+                var posts = _com.GetNodeLinkedByLinkedByWithLinkersCount<Post, Profile, Profile>(followerId, Linkage.Follow, Linkage.Publish, Linkage.Like);
+                foreach (var post in posts)
+                {
+                    bool isLike =_com.IsLinker<Post, Profile>(post.Id, followerId, Linkage.Like);
+                    if (isLike)
+                    {
+                        post.IsLiked = true;
+                    }
+                }
+                return Ok(posts);
             }
             catch (Exception ex)
             {
@@ -92,17 +101,46 @@ namespace SocialSerivce.Controllers
         }
 
         [HttpGet]
+        [Route("GetRecommendedFriends")]
+        public IHttpActionResult GetRecommendedFriends(string userId)
+        {
+            try
+            {
+                var recommendedFriends = _com.GetLinkers<Profile, Profile>(userId, Linkage.Recommended);
+                return Ok(recommendedFriends);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        [HttpGet]
+        [Route("GetRecommendedPosts")]
+        public IHttpActionResult GetRecommendedPosts(string userId)
+        {
+            try
+            {
+                var recommendedPosts = _com.GetLinkers<Profile, Post>(userId, Linkage.Recommended);
+                return Ok(recommendedPosts);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpGet]
         [Route("GetPosts")]
         public IHttpActionResult GetPosts(string userId)
         {
             try
             {
-                var followings = _com.GetLinkedBy<Profile, Profile>(userId, Linkage.Follow);
-                List<Post> posts = new List<Post>();
-                foreach (var f in followings)
-                {
-                    //posts = _com.GetLinkers<Post,Profile>(f.Id, Linkage.Publish);
-                }
+                var posts = _com.GetLinkedBy<Profile, Post>(userId, Linkage.Publish);
+          
                 return Ok(posts);
 
             }

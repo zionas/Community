@@ -46,7 +46,7 @@ namespace Social.BL.Interfaces
             
         
 
-        void LinkProfiles(SocialAction socialAction, bool swch = true);
+        void LinkTo(SocialAction socialAction, bool swch = true);
         
         
         void Like<TLikeable>(string likerId, string likeableId,bool swch=true)
@@ -58,5 +58,9 @@ namespace Social.BL.Interfaces
             where TPublish : IPost;
 
         void LinkProfileToPost(SocialAction socialAction, bool swch = true);
+
+        void LinkIf<TLinkedBy, TLinker>(SocialAction socialAction, bool swch = true)
+            where TLinkedBy : INode
+            where TLinker : INode;
     }
 }

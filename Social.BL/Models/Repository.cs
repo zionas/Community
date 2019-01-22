@@ -29,6 +29,7 @@ namespace Social.BL.Models
             }
         }
 
+
         public string GetTypeName(string id) 
         {
             using (IGraph graph = (IGraph)_graphFactory.Create())
