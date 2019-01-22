@@ -8,7 +8,9 @@ namespace CommunityNetwork.Common.Models
     {
         public string Content { get; set; }
         public DateTime CommentTime { get; set; }
+        public string PublisherId { get; set; }
         public int Likes { get; set ; }
+        public string Publisher { get; set; }
 
         public void Save()
         {

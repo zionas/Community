@@ -22,11 +22,15 @@ namespace SocialSerivce.Controllers
     {
         ICommunication _com;
         IRepository _repos;
+        private AmazonS3Uploader amazonS3Uploader;
+        private const string BUCKETURL = "https://s3.eu-central-1.amazonaws.com/pictures-bucket32/";
 
         public SocialActionsController(ICommunication com, IRepository repos)
         {
             _com = com;
             _repos = repos;
+            amazonS3Uploader = new AmazonS3Uploader();
+
         }
 
 
@@ -37,6 +41,11 @@ namespace SocialSerivce.Controllers
         {
             try
             {
+                if (post.ImageSourcePath != null)
+                {
+                    string keyImage = amazonS3Uploader.UploadFile(post.ImageSourcePath);
+                    post.ImageSourcePath = BUCKETURL + keyImage;
+                }
                 _repos.Add(post);
                 SocialAction socialAction = new SocialAction()
                 {
@@ -46,6 +55,17 @@ namespace SocialSerivce.Controllers
                     Switcher = true
                 };
                 _com.LinkProfileToPost(socialAction);
+                if (post.TagUserID != null)
+                {
+                    SocialAction socialAction2 = new SocialAction()
+                    {
+                        FromId = post.Id,
+                        ToId = post.TagUserID,
+                        linkage = Linkage.Mention.ToString(),
+                        Switcher = true
+                    };
+                    _com.LinkIf<Profile, Post>(socialAction2);
+                }
                 return Ok();
 
 
@@ -56,15 +76,55 @@ namespace SocialSerivce.Controllers
             }
 
         }
+
         [HttpPost]
         [Route("Upload")]
         public IHttpActionResult Upload([FromBody]string file)
         {
             try
             {
-                AmazonS3Uploader amazonS3Uploader = new AmazonS3Uploader();
-                string res =amazonS3Uploader.UploadFile(file);
+                string res = amazonS3Uploader.UploadFile(file);
+                return Ok(res);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetComments")]
+        public IHttpActionResult GetComments(string postId)
+        {
+            try
+            {
+                var comments = _com.GetLinkers<Post, Comment>(postId, Linkage.Comment);
+                return Ok(comments);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPost]
+        [Route("AddComment")]
+        public IHttpActionResult AddComment([FromBody]Comment comment)
+        {
+            try
+            {
+                _repos.Add(comment);
+                SocialAction socialAction = new SocialAction()
+                {
+                    FromId = comment.PublisherId,
+                    ToId = comment.Id,
+                    linkage = Linkage.Publish.ToString(),
+                    Switcher = true
+                };
+                _com.LinkIf<Comment, Profile>(socialAction);
                 return Ok();
+
+
             }
             catch (Exception e)
             {
@@ -82,9 +142,20 @@ namespace SocialSerivce.Controllers
                 string toId = socialAction.ToId;
                 Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
                 bool linked = socialAction.Switcher;
-                bool flag = _com.IsLinked<Profile, Profile>(fromId, toId, linkage);
-                if(flag)
-                    _com.UnLink<Profile, Profile>(fromId, toId, Linkage.Follow);
+                if (linked)
+                {
+                    _com.LinkIf<Profile, Profile>(socialAction, true);
+                    bool isLinked = _com.IsLinker<Profile, Profile>(toId, fromId, Linkage.Follow);
+                    if (isLinked)
+                        _com.UnLink<Profile, Profile>(toId, fromId, Linkage.Follow);
+                    bool isLinker = _com.IsLinker<Profile, Profile>(fromId, toId, Linkage.Follow);
+                    if (isLinker)
+                        _com.UnLink<Profile, Profile>(fromId, toId, Linkage.Follow);
+                }
+                else
+                {
+                    _com.UnLink<Profile, Profile>(toId, fromId, Linkage.Block);
+                }
                 return Ok();
             }
             catch (Exception e)
@@ -104,9 +175,32 @@ namespace SocialSerivce.Controllers
             Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
             bool toLink = socialAction.Switcher;
             if (toLink)
-                _com.LinkProfiles(socialAction);
+                _com.LinkTo(socialAction);
             else
-                _com.LinkProfiles(socialAction, false);
+                _com.LinkTo(socialAction, false);
+            return Ok(linkage + "s");
+
+
+        }
+
+        [HttpPost]
+        [Route("DoLike")]
+        public IHttpActionResult DoLike([FromBody]SocialAction socialAction)
+        {
+            string fromId = socialAction.FromId;
+            string toId = socialAction.ToId;
+            Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
+            bool toLink = socialAction.Switcher;
+            if (toLink)
+                _com.LinkProfileToPost(socialAction);
+            else
+            {
+                bool a = _com.IsLinker<Post, Profile>(toId, fromId, Linkage.Like);
+                _com.UnLink<Post, Profile>(toId, fromId, Linkage.Like);
+
+
+            }
+
             return Ok(linkage + "s");
 
 
@@ -145,6 +239,6 @@ namespace SocialSerivce.Controllers
 
 
         }
-       
+
     }
 }

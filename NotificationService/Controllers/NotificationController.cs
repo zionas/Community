@@ -38,9 +38,9 @@ namespace NotificationService.Controllers
             
             bool toLink = socialAction.Switcher;
             if (toLink)
-                _com.LinkProfiles(socialAction);
+                _com.LinkTo(socialAction);
             else
-                _com.LinkProfiles(socialAction, false);
+                _com.LinkTo(socialAction, false);
             return Ok(linkage + "s");
 
 

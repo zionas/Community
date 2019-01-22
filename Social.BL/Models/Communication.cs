@@ -181,7 +181,7 @@ namespace Social.BL.Models
 
             }
         }
-        public void LinkProfiles(SocialAction socialAction,bool swch=true)
+        public void LinkTo(SocialAction socialAction,bool swch=true)
         {
             string linkerId = socialAction.FromId;
             string linkedById = socialAction.ToId;
@@ -205,6 +205,21 @@ namespace Social.BL.Models
 
             else
                 UnLink<Post, Profile>(linkerId, linkedId, linkage);
+
+        }
+
+        public void LinkIf<TLinkedBy,TLinker>(SocialAction socialAction, bool swch = true)
+            where TLinkedBy:INode
+            where TLinker:INode
+        {
+            string linkerId = socialAction.FromId;
+            string linkedId = socialAction.ToId;
+            Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
+            if (swch)
+                Link<TLinkedBy, TLinker>(linkedId, linkerId, linkage);
+
+            else
+                UnLink<TLinkedBy, TLinker>(linkerId, linkedId, linkage);
 
         }
 

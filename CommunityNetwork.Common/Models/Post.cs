@@ -18,11 +18,13 @@ namespace CommunityNetwork.Common.Models
         public string PublisherId { get; set; }
         public string Publisher { get; set; }
         public int Likes { get ; set ; }
+        public bool IsLiked { get; set; }
+        public string TagUserID { get; set; }
 
 
         //private string _content;
 
-        
+
 
         public List<Comment> GetComments()
         {

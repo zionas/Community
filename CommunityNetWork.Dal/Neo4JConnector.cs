@@ -276,7 +276,7 @@ namespace CommunityNetWork.Dal
 
         static string GetMatchLinkedByLinkedByUndefinedLinkageString<TLinkedByLinkedBy, TLinkedBy>(Linkage linkage)
         {
-            return string.Format(MatchLinkedByLinkedByUndefinedLinkageFormat, TypeName<TNode>(), linkage, TypeName<TLinkedBy>());
+            return string.Format(MatchLinkedByLinkedByUndefinedLinkageFormat, TypeName<TLinkedByLinkedBy>(), linkage, TypeName<TLinkedBy>());
         }
 
         static string GetMatchFullDefinedLinkageString<TLinkedBy,TLinker>(Linkage linkage)
@@ -284,9 +284,9 @@ namespace CommunityNetWork.Dal
             return string.Format(MatchFullDefinedLinkageFormat, TypeName<TLinkedBy>(),linkage,TypeName<TLinker>());
         }
        
-        static string GetMatchByLinkageByLinkageString<TNode, TLinkedBy,TLinkedByLinkedBy>(Linkage linkage,Linkage linkageBy)
+        static string GetMatchByLinkageByLinkageString<TLinkedByLinkedBy, TLinkedBy,TLinker>(Linkage linkage,Linkage linkageBy)
         {
-            return string.Format(MatchFullDefinedLinkageByLinkageFormat, TypeName<TNode>(),linkage, TypeName<TLinkedBy>(), linkageBy,TypeName<TLinkedByLinkedBy>());
+            return string.Format(MatchFullDefinedLinkageByLinkageFormat, TypeName<TLinker>(),linkage, TypeName<TLinkedBy>(), linkageBy,TypeName<TLinkedByLinkedBy>());
         }
 
 
@@ -570,7 +570,7 @@ namespace CommunityNetWork.Dal
                 .With("node")
                 .Match(linkerMatch)
                 .Where(findLinker)
-                .Merge(link)
+                .Create(link)
                 .WithParam("relParam", linkParams)
                 .Return(node => node.As<TNew>())
                 .Results.FirstOrDefault();
@@ -872,7 +872,7 @@ namespace CommunityNetWork.Dal
 
         }
 
-        public ICypherFluentQuery GetNodeLinkedByLinkedByResults <TLinker, TLinkedBy, TLinkedByLinkedBy>(
+        public ICypherFluentQuery GetNodeLinkedByLinkedByResults <TLinkedByLinkedBy, TLinkedBy, TLinker>(
             string linkerId,
             Linkage linkage,
             Linkage linkageBy)
@@ -882,7 +882,7 @@ namespace CommunityNetWork.Dal
 
             var query = CreatePropertyEqualsLambda<TLinker>("linker", "Id", linkerId);
 
-            string match = GetMatchByLinkageByLinkageString<TLinker, TLinkedBy, TLinkedByLinkedBy>(linkage, linkageBy);
+            string match = GetMatchByLinkageByLinkageString<TLinkedByLinkedBy, TLinkedBy, TLinker>(linkage, linkageBy);
             return Connect().Cypher
             .OptionalMatch(match)
             .Where(query);

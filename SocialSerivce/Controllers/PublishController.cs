@@ -36,24 +36,32 @@ namespace SocialSerivce.Controllers
             }
         }
 
+
+
         [HttpPost]
         [Route("Comment")]
         public IHttpActionResult Comment([FromBody]PublishAction publishAction)
         {
             try
             {
-                Comment comment = (Comment)publishAction.Publish;
+                Comment newComment = new Comment()
+                {
+                    CommentTime = DateTime.Now,
+                    Content = publishAction.Content,
+                    Publisher = publishAction.Publisher
+                };
+                // Comment comment = (Comment)publishAction.Publish;
                 string commentedId = publishAction.CommentedId;
                 string authorId = publishAction.AuthorId;
 
 
-                if (comment == default(Comment)
-                   || commentedId == default(string)
-                   || authorId == default(string))
-                    return BadRequest();
+                //if (newComment == default(Comment)
+                //   || commentedId == default(string)
+                //   || authorId == default(string))
+                //    return BadRequest();
 
-                Comment c = _publisher.Comment<Post>(authorId, comment, commentedId);
-                if (c.Equals(comment))
+                Comment c = _publisher.Comment<Post>(authorId, newComment, commentedId);
+                if (c.Equals(newComment))
                     return Ok(c);
                 else
                     return ResponseMessage(new HttpResponseMessage(HttpStatusCode.ExpectationFailed));

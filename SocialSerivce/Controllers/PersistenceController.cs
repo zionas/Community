@@ -60,6 +60,24 @@ namespace SocialSerivce.Controllers
 
         }
 
-        
+        [HttpGet]
+        [Route("GetProfileByUserId")]
+        public IHttpActionResult GetProfileByUserId(string userId)
+        {
+            try
+            {
+                var profiles = repos.Get<Profile>("Id", userId);
+                return Ok(profiles);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+
+
+
     }
 }

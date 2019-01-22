@@ -15,7 +15,7 @@ namespace Social.BL
     public class AmazonS3Uploader
     {
         //static readonly string bucketUrl = ConfigurationManager.AppSettings["s3Key"];
-        static readonly string bucketName = "ozbook";
+        static readonly string bucketName = "pictures-bucket32";
 
         public string UploadFile(string image)
         {
@@ -37,14 +37,14 @@ namespace Social.BL
                     var request = new PutObjectRequest
                     {
                         BucketName = bucketName,
-                        CannedACL = S3CannedACL.PublicRead,
+                        CannedACL = S3CannedACL.PublicReadWrite,
                         Key = key
                     };
                     using (var ms = new MemoryStream(bytes))
                     {
                         request.InputStream = ms;
                         var res = s3Client.PutObject(request);
-                        return "bucketUrl" + key;
+                        return key;
 
                     }
                 }
