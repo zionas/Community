@@ -22,7 +22,7 @@ namespace Social.BL.Models
         {
             using (IGraph graph = (IGraph)_graphFactory.Create())
             {
-                return graph.CreateAndLinkWithParams<TPublish,Profile>(profileId, publish, Linkage.Publish, new LinkParams());
+                return graph.CreateAndLink<TPublish,Profile>(profileId, publish, Linkage.Publish);
             }
         }
         

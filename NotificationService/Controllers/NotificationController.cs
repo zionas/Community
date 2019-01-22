@@ -1,47 +1,53 @@
-﻿using CommunityNetwork.Common;
-using CommunityNetWork.Common.Enums;
-using Social.BL.Interfaces;
-using Social.BL.Models;
+﻿
+using CommunityNetwork.Common.Models;
+using NotificationService.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace NotificationService.Controllers
 {
+    [RoutePrefix("api/Notification")]
     public class NotificationController : ApiController
     {
-        ICommunication _com;
-        IRepository _repos;
-        public NotificationController(ICommunication com, IRepository repos)
-        {
-            _com = com;
-            _repos = repos;
-        }
-               
 
+        private NotificationSender _notificationSender;
+
+        public NotificationController()
+        {
+             _notificationSender = new NotificationSender();
+        }
+        [HttpGet]
+        [Route("Register")]
+        public async Task<IHttpActionResult> Register(string profileId)
+        {
+            try
+            {
+                NotificationSender notificationSender = new NotificationSender();
+
+                await notificationSender.Register(profileId,profileId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpPost]
         [Route("SendMessage")]
-        public IHttpActionResult SendMessage([FromBody]SocialAction socialAction)
+        public async Task<IHttpActionResult> SendMessage([FromBody]SocialAction socialAction)
         {
-            string fromUser = _repos.Get<Profile>(socialAction.FromId).UserName;
-            Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
-            string subject = linkage.ToString() + "ed";
-            switch (linkage) {
-                default:
-                    return BadRequest();
+            try
+            {
+                NotificationSender notificationSender = new NotificationSender();
                 
-            }//socialAction.FromId;
-            string toId = socialAction.ToId;
-            
-            bool toLink = socialAction.Switcher;
-            if (toLink)
-                _com.LinkTo(socialAction);
-            else
-                _com.LinkTo(socialAction, false);
-            return Ok(linkage + "s");
+                await notificationSender.Send(socialAction);
+                return Ok();
+                    }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
 
 
         }

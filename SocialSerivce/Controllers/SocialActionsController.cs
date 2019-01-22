@@ -5,19 +5,17 @@ using Social.BL.Models;
 using System;
 using System.Web.Http;
 using CommunityNetwork.Common;
-using CommunityNetwork.Common.Models;
-using System.IO;
-using System.Web;
-using Amazon.S3;
-using Amazon;
-using Amazon.S3.Transfer;
-using Social.BL;
-
 using Authentication.BL;
+using System.Net.Http;
+using Newtonsoft.Json;
+using System.Text;
+using CommunityNetwork.Common.Models;
 
 namespace SocialSerivce.Controllers
 {
     [RoutePrefix("api/SocialActions")]
+    [AuthorizeValidator ]
+    [Authorize]
     public class SocialActionsController : ApiController
     {
         ICommunication _com;
@@ -25,7 +23,7 @@ namespace SocialSerivce.Controllers
         private AmazonS3Uploader amazonS3Uploader;
         private const string BUCKETURL = "https://s3.eu-central-1.amazonaws.com/pictures-bucket32/";
 
-        public SocialActionsController(ICommunication com, IRepository repos)
+        bool SendMessage(SocialAction socialAction)
         {
             _com = com;
             _repos = repos;
@@ -206,7 +204,6 @@ namespace SocialSerivce.Controllers
 
         }
 
-
         [HttpPost]
         [Route("IsSocialLinked")]
         public IHttpActionResult IsSocialLinked([FromBody]SocialAction socialAction)
@@ -224,17 +221,16 @@ namespace SocialSerivce.Controllers
                     bool linker = _com.IsLinker<Profile, Profile>(toId, fromId, linkage);
                     return Ok(linker);
             }
-
+           
 
         }
-
 
         [HttpPost]
         [Route("GetNotBlocked")]
         public IHttpActionResult GetNotBlocked([FromBody]string blockerId)
         {
-
-            var notLinked = _com.GetNotLinked<Profile, Profile>(blockerId, Linkage.Block);
+           
+            var notLinked= _com.GetNotLinked<Profile, Profile>(blockerId,Linkage.Block);
             return Ok(notLinked);
 
 

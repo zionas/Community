@@ -161,7 +161,7 @@ namespace ConsoleApp1
                         cypher.Put(t1);
                         var t5 = cypher.Create(t3);
                         Linkage linkage = Linkage.Like;
-                        var list = cypher.GetNodesLinks<Test1, Test1>(linkage);
+                        
                         var res = cypher.Get<Test1>(t1.Id);
 
                     }

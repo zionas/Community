@@ -80,6 +80,8 @@
     <Compile Include="Interfaces\IGraph.cs" />
     <Compile Include="Interfaces\IGraphFactory.cs" />
     <Compile Include="Neo4JConnector.cs" />
+    <Compile Include="Neo4JFormat.cs" />
+    <Compile Include="Neo4JLambda.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

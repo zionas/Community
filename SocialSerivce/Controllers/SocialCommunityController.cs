@@ -25,7 +25,7 @@ namespace SocialSerivce.Controllers
         {
             try
             {
-                var followers = _com.GetLinkers<Profile, Profile>(userId, Linkage.Follow);
+                var followers = _com.GetNodeLinkers<Profile, Profile>(userId, Linkage.Follow);
                 return Ok(followers);
 
             }
