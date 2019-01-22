@@ -33,7 +33,7 @@ namespace Social.BL.Models
         {
             using (IGraph graph = (IGraph)_graphFactory.Create())
             {
-                return graph.GetTypeName(id);
+                return graph.GetModelName(id);
 
             }
         }

@@ -1,15 +1,13 @@
 ﻿
-using System;
 
-using CommunityNetwork.Common.Enums;
 namespace CommunityNetwork.Common.Models
 {
     public class Notification
     {
-        public string NotifiedUserId { get; set; }
-        public DateTime Time { get; set; }
-        public NotificationType NotificationType { get; set; }
+        public string ActorId { get; set; }
+        public string linkage { get; set; }
+        public string ObjectId { get; set; }
 
-        
+
     }
 }

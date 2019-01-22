@@ -40,8 +40,8 @@ namespace CommunityNetWork.Dal
             connected = true;
             provisionedThroughput = new ProvisionedThroughput
             {
-                ReadCapacityUnits = 1000,
-                WriteCapacityUnits = 1000
+                ReadCapacityUnits = 5,
+                WriteCapacityUnits = 5
 
             };
             Console.WriteLine("connected successfully");

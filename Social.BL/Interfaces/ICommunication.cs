@@ -21,19 +21,17 @@ namespace Social.BL.Interfaces
         bool IsLinker<TNode, TLinked>(string nodeId, string linkedId, Linkage linkage)
            where TNode : INode where TLinked : INode;
 
-       List<TLinked>  GetLinkers<TNode, TLinked>(string nodeId, Linkage linkage) where TNode : INode where TLinked : INode;
+         List<TLinkedBy> GetNodeLinkedBy<TLinkedBy, TLinker>(string linkerId, Linkage linkage)
+            where TLinker : MNode
+            where TLinkedBy : MNode;
 
-        List<TLinkedBy> GetLinkedBy<TLinker, TLinkedBy>(string linkerId, Linkage linkage) where TLinkedBy : INode where TLinker : INode;
-        List<TLinkedByLinkedBy> GetLinkedByLinkedBy<TNode, TLinkedBy, TLinkedByLinkedBy>(string nodeId, Linkage linkage, Linkage linkageBy)
-            where TNode : INode
-            where TLinkedBy : INode
-            where TLinkedByLinkedBy : INode;
+        List<TLinker> GetNodeLinkers<TLinkedBy, TLinker>(string linkedById, Linkage linkage)
+            where TLinker : MNode
+            where TLinkedBy : MNode;
 
         List<MNode> GetNotLinked<TNode,TNotLinked>(string nodeId, Linkage linkage)
             where TNode : INode where TNotLinked : MNode;
-        List<TLinked> GetNewLinkers<TNode, TLinked>(string nodeId, Linkage linkage, DateTime dateTime)
-        where TNode : INode
-            where TLinked : INode;
+        
 
 
         List<TLinkedByLinkedBy> GetNodeLinkedByLinkedByWithLinkersCount<TLinkedByLinkedBy, TLinkedBy, TLinker>(
@@ -46,9 +44,7 @@ namespace Social.BL.Interfaces
             where TLinker : INode;
 
             
-        List<Tuple<TLinkedBy, TLinkedByLinkedBy>> GetNewLinkedByLinkers<TNode, TLinkedBy, TLinkedByLinkedBy>(string nodeId, Linkage linkage, Linkage linkageBy, DateTime dateTime)
-            where TNode : INode where TLinkedBy : INode where TLinkedByLinkedBy : INode;
-
+        
 
         void LinkProfiles(SocialAction socialAction, bool swch = true);
         

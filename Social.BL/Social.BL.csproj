@@ -68,7 +68,6 @@
     <Compile Include="Models\Publisher.cs" />
     <Compile Include="Models\PublishAnalyzer.cs" />
     <Compile Include="Models\Repository.cs" />
-    <Compile Include="Models\SocialAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
