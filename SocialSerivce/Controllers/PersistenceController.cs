@@ -1,10 +1,12 @@
 ﻿using CommunityNetwork.Common;
+using CommunityNetwork.Common.Models;
 using CommunityNetWork.Dal.Interfaces;
 using Newtonsoft.Json;
 using Social.BL.Models;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 
 namespace SocialSerivce.Controllers
@@ -13,30 +15,33 @@ namespace SocialSerivce.Controllers
     public class PersistenceController : ApiController
     {
         Repository repos;
-        
+
         public PersistenceController(IGraphFactory graphFactory)
         {
-            
+
             repos = new Repository(graphFactory);
         }
-        
+
+     
+
 
         [HttpPost]
         [Route("CreateProfile")]
-         public IHttpActionResult CreateProfile([FromBody]Profile profile)
+        public IHttpActionResult CreateProfile([FromBody]Profile profile)
         {
             try
             {
-                Profile p = repos.Add(profile);
-                if (p.Equals(profile))
-                    return Ok(p);
-                else
-                    throw new Exception(HttpStatusCode.InternalServerError.ToString());
+                Profile newProfile = repos.Add(profile);
+
+                return Ok(newProfile);
+
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest("Error occured," + ex.Message);
             }
+
+
         }
 
         [HttpGet]
@@ -71,7 +76,7 @@ namespace SocialSerivce.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            
+
         }
 
         [HttpGet]

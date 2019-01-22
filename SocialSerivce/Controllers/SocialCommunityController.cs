@@ -54,6 +54,7 @@ namespace SocialSerivce.Controllers
 
 
         }
+
         [HttpPost]
         [Route("GetFollowed")]
         public IHttpActionResult GetFollowed([FromBody]string followerId)
@@ -81,6 +82,29 @@ namespace SocialSerivce.Controllers
             {
                 var followers = _com.GetNodeLinkedByLinkedByWithLinkersCount<Post, Profile, Profile>(followerId, Linkage.Follow, Linkage.Publish, Linkage.Like);
                 return Ok(followers);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+
+        }
+
+        [HttpGet]
+        [Route("GetPosts")]
+        public IHttpActionResult GetPosts(string userId)
+        {
+            try
+            {
+                var followings = _com.GetLinkedBy<Profile, Profile>(userId, Linkage.Follow);
+                List<Post> posts = new List<Post>();
+                foreach (var f in followings)
+                {
+                    //posts = _com.GetLinkers<Post,Profile>(f.Id, Linkage.Publish);
+                }
+                return Ok(posts);
+
             }
             catch (Exception ex)
             {

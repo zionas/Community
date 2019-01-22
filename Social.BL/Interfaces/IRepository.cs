@@ -13,9 +13,6 @@ namespace Social.BL.Interfaces
         string GetTypeName(string id);
         TNode Get<TNode>(string id) where TNode : MNode;
         List<TNode> Get<TNode>(string propertyName, object value) where TNode : MNode;
-
-        
-
         TNode Add<TNode>(TNode node) where TNode : MNode;
 
     }
