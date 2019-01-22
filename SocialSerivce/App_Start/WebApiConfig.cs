@@ -42,7 +42,7 @@ namespace SocialSerivce
             container.Register<IDynamoDBFactory>(() => new AwsDynamoDBFactory());
             container.Register<ICommunication>(() => new Communication(container.GetInstance< IGraphFactory>()));
             container.Register<IRepository>(() => new Repository(container.GetInstance<IGraphFactory>()));
-
+            container.Register<IPublisher>(() => new Publisher(container.GetInstance<IGraphFactory>()));
             container.Verify();
             GlobalConfiguration.Configuration.DependencyResolver = new SimpleInjectorWebApiDependencyResolver(container);
             GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;

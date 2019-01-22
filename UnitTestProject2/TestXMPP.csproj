@@ -5,11 +5,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9AD9765A-8ACA-4521-A977-9BB7F19BA25B}</ProjectGuid>
+    <ProjectGuid>{C1A088A1-EFCD-47DB-95B1-C62CFE9CED5A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Neo4J.Test</RootNamespace>
-    <AssemblyName>Neo4J.Test</AssemblyName>
+    <RootNamespace>UnitTestProject2</RootNamespace>
+    <AssemblyName>UnitTestProject2</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -45,19 +45,14 @@
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\MSTest.TestFramework.1.3.2\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="Neo4jClient, Version=3.0.1.26, Culture=neutral, PublicKeyToken=null" />
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Neo4JConnectorApi.cs" />
+    <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -65,12 +60,12 @@
       <Project>{301e0f01-b128-4b06-b56c-a9792e9d57c2}</Project>
       <Name>CommunityNetwork.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CommunityNetWork.Dal\CommunityNetWork.Dal.csproj">
-      <Project>{5783c551-b1f7-48f2-ab81-0aee4598159e}</Project>
-      <Name>CommunityNetWork.Dal</Name>
+    <ProjectReference Include="..\NotificationService\NotificationService.csproj">
+      <Project>{f4a28998-a7e2-4a7b-a10d-4788786ba47a}</Project>
+      <Name>NotificationService</Name>
     </ProjectReference>
     <ProjectReference Include="..\Social.BL\Social.BL.csproj">
-      <Project>{5f9d868f-3c1a-4a38-828c-3f641a2af258}</Project>
+      <Project>{5F9D868F-3C1A-4A38-828C-3F641A2AF258}</Project>
       <Name>Social.BL</Name>
     </ProjectReference>
   </ItemGroup>

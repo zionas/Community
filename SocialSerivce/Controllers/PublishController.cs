@@ -16,8 +16,37 @@ namespace SocialSerivce.Controllers
         {
             _publisher = publisher;
         }
-        
-       
+        [HttpGet]
+        [Route("GetCommentAuthorName")]
+        public IHttpActionResult GetCommentAuthorName(string id)
+        {
+            string name;
+            try
+            {
+                name = _publisher.GetPublisher<Comment>(id).UserName;
+                return Ok(name);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetPostAuthorName")]
+        public IHttpActionResult GetPostAuthorName(string id)
+        {
+            string name;
+            try
+            {
+                name = _publisher.GetPublisher<Comment>(id).UserName;
+                return Ok(name);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         [HttpPost]
         [Route("PublishPost")]

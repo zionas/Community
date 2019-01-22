@@ -6,6 +6,10 @@ using System;
 using System.Web.Http;
 using CommunityNetwork.Common;
 using Authentication.BL;
+using System.Net.Http;
+using Newtonsoft.Json;
+using System.Text;
+using CommunityNetwork.Common.Models;
 
 namespace SocialSerivce.Controllers
 {
@@ -16,6 +20,30 @@ namespace SocialSerivce.Controllers
     {
         ICommunication _com;
         IRepository _repos;
+        const string NotificationServiceUri = "http://localhost:54169/";
+        const string SendMessageApi= NotificationServiceUri+"/api/Notification";
+
+        bool SendMessage(SocialAction socialAction)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    httpClient.BaseAddress = new Uri(NotificationServiceUri);
+                    var content = new StringContent(JsonConvert.SerializeObject(socialAction), Encoding.UTF8, "application/json");
+                    var response = httpClient.PostAsync(SendMessageApi, content).Result;
+                    if (response.IsSuccessStatusCode)
+                        return true;
+                    else
+                        return false;
+                }
+                catch (Exception ex)
+                {
+                    return false;//skip this exception
+                }
+            }       
+                
+        }
         public SocialActionsController(ICommunication com,IRepository repos)
         {
             _com = com;
@@ -32,10 +60,23 @@ namespace SocialSerivce.Controllers
             string toId = socialAction.ToId;
             Linkage linkage = (Linkage)Enum.Parse(typeof(Linkage), socialAction.linkage);
             bool toLink = socialAction.Switcher;
-            if (toLink)
-                _com.LinkProfiles(socialAction);
-            else
-                _com.LinkProfiles(socialAction, false);
+            try
+            {
+                if (toLink)
+                {
+                    _com.LinkProfiles(socialAction);
+                    SendMessage(socialAction);
+
+                }
+
+                else
+                    _com.LinkProfiles(socialAction, false);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+            
             return Ok(linkage+"s");
 
 

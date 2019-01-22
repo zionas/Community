@@ -24,7 +24,7 @@ namespace SocialSerivce.Controllers
         {
             try
             {
-                var followers = _com.GetLinkers<Profile, Profile>(userId, Linkage.Follow);
+                var followers = _com.GetNodeLinkers<Profile, Profile>(userId, Linkage.Follow);
                 return Ok(followers);
 
             }
@@ -43,7 +43,7 @@ namespace SocialSerivce.Controllers
         {
             try
             {
-                var blockedUsers = _com.GetLinkers<Profile, Profile>(userId, Linkage.Block);
+                var blockedUsers = _com.GetNodeLinkers<Profile, Profile>(userId, Linkage.Block);
                 return Ok(blockedUsers);
 
             }
@@ -61,7 +61,7 @@ namespace SocialSerivce.Controllers
 
             try
             {
-                var followers = _com.GetLinkedBy<Profile, Profile>(followerId, Linkage.Block);
+                var followers = _com.GetNodeLinkedBy<Profile, Profile>(followerId, Linkage.Block);
 
                 return Ok(followers);
             }

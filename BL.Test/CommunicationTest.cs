@@ -86,7 +86,7 @@ namespace BL.Test
             com.Link<NodeA, NodeA>(nA3.Id, nA1.Id, Linkage.Follow);
             com.Link<NodeA, NodeA>(nA3.Id, nA2.Id, Linkage.Follow);
                 
-            list = com.GetLinkers<NodeA, NodeA>(nA3.Id, Linkage.Follow);
+            list = com.GetNodeLinkers<NodeA, NodeA>(nA3.Id, Linkage.Follow);
             
             bool result = list.Count==2 
                           && list.Contains(nA1) 
@@ -110,9 +110,9 @@ namespace BL.Test
             com.Link<NodeA, NodeA>(nA3.Id, nA1.Id, Linkage.Follow);
             com.Link<NodeA, NodeA>(nA3.Id, nA2.Id, Linkage.Follow);
 
-            list1 = com.GetLinkers<NodeA, NodeA>(nA3.Id, Linkage.Follow);
+            list1 = com.GetNodeLinkers<NodeA, NodeA>(nA3.Id, Linkage.Follow);
             com.UnLink<NodeA, NodeA>(nA3.Id, nA1.Id, Linkage.Follow);
-            list2= com.GetLinkers<NodeA, NodeA>(nA3.Id, Linkage.Follow);
+            list2= com.GetNodeLinkers<NodeA, NodeA>(nA3.Id, Linkage.Follow);
 
             bool result = list1.Count == 2
                           && list1.Contains(nA1)
@@ -139,12 +139,28 @@ namespace BL.Test
             com.Link<NodeA, NodeA>(nA1.Id, nA3.Id, Linkage.Follow);
             com.Link<NodeA, NodeA>(nA2.Id, nA3.Id, Linkage.Follow);
                 
-            list = com.GetLinkedBy<NodeA, NodeA>(nA3.Id, Linkage.Follow);
+            list = com.GetNodeLinkedBy<NodeA, NodeA>(nA3.Id, Linkage.Follow);
             
             bool result = list.Count==2 
                           && list.Contains(nA1) 
                           && list.Contains(nA2);
             Assert.AreEqual(result, true);
+        }
+        [TestMethod]
+        public void TestCreatedAndLink()
+        {
+
+            Init();
+            NodeA result;
+            using (Neo4jConnector neo4j = new Neo4jConnector())
+            {
+                neo4j.Create(nA1);
+                result = neo4j.CreateAndLink<NodeA, NodeA>(nA1.Id, nA2, Linkage.Follow);
+
+
+            }
+
+            Assert.AreEqual(result, nA2);
         }
     }
 }

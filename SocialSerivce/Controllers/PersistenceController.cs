@@ -40,6 +40,25 @@ namespace SocialSerivce.Controllers
         }
 
         [HttpGet]
+        [Route("GetTypeName")]
+        public IHttpActionResult GetTypeName(string id)
+        {
+            try
+            {
+                string name = repos.GetTypeName(id);
+                if (string.IsNullOrEmpty(name))
+                    return BadRequest();
+
+                return Ok(name);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        [HttpGet]
         [Route("GetProfileByUserName")]
         public IHttpActionResult GetProfileByUserName(string userName)
         {
@@ -55,6 +74,22 @@ namespace SocialSerivce.Controllers
             
         }
 
-        
+        [HttpGet]
+        [Route("GetProfileUserName")]
+        public IHttpActionResult GetProfileUserName(string id)
+        {
+            try
+            {
+                Profile profile = repos.Get<Profile>(id);
+                return Ok(profile.UserName);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+
     }
 }
